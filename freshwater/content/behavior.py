@@ -1,7 +1,13 @@
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 
-from .interfaces import ICatalogueMetadata
+from .interfaces import ICatalogueMetadata, IExternalLinks
+
+
+class ExternalLinks(MetadataBase):
+    """External Links Behavior"""
+
+    external_links = DCFieldProperty(IExternalLinks["external_links"])
 
 
 class CatalogueMetadata(MetadataBase):
