@@ -14,11 +14,11 @@ class IFreshwaterContentLayer(IDefaultBrowserLayer):
     """Marker interface that defines a browser layer."""
 
 
-@provider(IFormFieldProvider)
-class IExternalLinks(model.Schema):
-    """External links interface with RichText schema"""
-
-    external_links = RichText(title=u"External Links", description=u"", required=False)
+# @provider(IFormFieldProvider)
+# class IExternalLinks(model.Schema):
+#     """External links interface with RichText schema"""
+#
+#     external_links = RichText(title=u"External Links", description=u"", required=False)
 
 
 @provider(IFormFieldProvider)

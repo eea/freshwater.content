@@ -11,6 +11,7 @@
   <include package=".browser" />
   <include package=".upgrades" />
 
+  <!--
   <plone:behavior
       name="freshwater.external-links"
       title="External Links"
@@ -20,6 +21,7 @@
       for="plone.dexterity.interfaces.IDexterityContent"
       marker=".interfaces.IExternalLinks"
       />
+-->
 
   <plone:behavior
       name="freshwater.catalogue-metadata"
