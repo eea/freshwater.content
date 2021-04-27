@@ -1,6 +1,8 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
+  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   xmlns:i18n="http://namespaces.zope.org/i18n"
+  xmlns:plone="http://namespaces.plone.org/plone"
   i18n_domain="eea">
 
   <i18n:registerTranslations directory="locales" />
@@ -8,5 +10,33 @@
   <include file="profiles.zcml" />
   <include package=".browser" />
   <include package=".upgrades" />
+
+  <plone:behavior
+      name="freshwater.external-links"
+      title="External Links"
+      description="Adds External Links fields"
+      factory=".behavior.ExternalLinks"
+      provides=".interfaces.IExternalLinks"
+      for="plone.dexterity.interfaces.IDexterityContent"
+      marker=".interfaces.IExternalLinks"
+      />
+
+  <plone:behavior
+      name="freshwater.catalogue-metadata"
+      title="Freshwater Catalogue metadata"
+      description="Adds Freshwater Catalogue metadata fields"
+      factory=".behavior.CatalogueMetadata"
+      provides=".interfaces.ICatalogueMetadata"
+      for="plone.dexterity.interfaces.IDexterityContent"
+      marker=".interfaces.ICatalogueMetadata"
+      />
+
+  <genericsetup:registerProfile
+    name="metadata_catalogue"
+    title="Freshwater Metadata Catalogue"
+    description="Install metadata catalogue specific settings"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    directory="profiles/upgrades/metadata_catalogue"
+    />
 
 </configure>
