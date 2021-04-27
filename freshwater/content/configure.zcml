@@ -24,14 +24,14 @@
 -->
 
   <plone:behavior
-      name="freshwater.catalogue-metadata"
-      title="Freshwater Catalogue metadata"
-      description="Adds Freshwater Catalogue metadata fields"
-      factory=".behavior.CatalogueMetadata"
-      provides=".interfaces.ICatalogueMetadata"
-      for="plone.dexterity.interfaces.IDexterityContent"
-      marker=".interfaces.ICatalogueMetadata"
-      />
+    name="freshwater.catalogue-metadata"
+    title="Freshwater Catalogue metadata"
+    description="Adds Freshwater Catalogue metadata fields"
+    factory=".behavior.CatalogueMetadata"
+    provides=".interfaces.ICatalogueMetadata"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".interfaces.ICatalogueMetadata"
+    />
 
   <genericsetup:registerProfile
     name="metadata_catalogue"
@@ -40,5 +40,25 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     directory="profiles/upgrades/metadata_catalogue"
     />
+
+  <utility
+      name="wise_themes_vocabulary"
+      component=".vocabulary.themes_vocabulary"
+      />
+
+  <utility
+      name="wise_subthemes_vocabulary"
+      component=".vocabulary.subthemes_vocabulary"
+      />
+
+  <utility
+      name="wise_organisations_vocabulary"
+      component=".vocabulary.organisations_vocabulary"
+      />
+
+  <utility
+      name="wise_dpsir_vocabulary"
+      component=".vocabulary.dpsir_vocabulary"
+      />
 
 </configure>
