@@ -25,7 +25,6 @@
   <element value="plone.dublincore"/>
   <element value="plone.namefromtitle"/>
   <element value="freshwater.catalogue-metadata"/>
-<!--  <element value="freshwater.external-links"/>-->
  </property>
  <property name="schema"></property>
  <property name="model_source">

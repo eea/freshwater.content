@@ -11,18 +11,6 @@
   <include package=".browser" />
   <include package=".upgrades" />
 
-  <!--
-  <plone:behavior
-      name="freshwater.external-links"
-      title="External Links"
-      description="Adds External Links fields"
-      factory=".behavior.ExternalLinks"
-      provides=".interfaces.IExternalLinks"
-      for="plone.dexterity.interfaces.IDexterityContent"
-      marker=".interfaces.IExternalLinks"
-      />
--->
-
   <plone:behavior
     name="freshwater.catalogue-metadata"
     title="Freshwater Catalogue metadata"
