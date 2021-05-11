@@ -93,9 +93,6 @@ class ICatalogueMetadata(model.Schema):
 
     publication_year = Int(title=u"Publication year", required=True)
 
-    # temporal_coverage = TextLine(title=u"Temporal coverage", required=False)
-    # geo_coverage = TextLine(title=u"Geographical coverage", required=False)
-
     temporal_coverage = JSONField(
         title=u'Temporal coverage',
         required=False,
@@ -103,7 +100,7 @@ class ICatalogueMetadata(model.Schema):
         default={}
     )
 
-    temporal_coverage = JSONField(
+    geo_coverage = JSONField(
         title=u'Geographical coverage',
         required=False,
         widget="geolocation",
