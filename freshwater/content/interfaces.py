@@ -9,6 +9,7 @@ from zope.interface import provider
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
                          TextLine, Tuple)
+from plone.schema import JSONField
 
 
 class IFreshwaterContentLayer(IDefaultBrowserLayer):
@@ -62,6 +63,13 @@ class ICatalogueMetadata(model.Schema):
                     u"automatic fetching of EEA information",
     )
 
+    embed_url = TextLine(
+        title=u"Embed URL",
+        description=u"If EEA link, can trigger "
+                    u"automatic fetching of EEA information",
+        required=False,
+    )
+
     organisation = Choice(
         title=u"Organisation",
         required=True,
@@ -85,9 +93,22 @@ class ICatalogueMetadata(model.Schema):
 
     publication_year = Int(title=u"Publication year", required=True)
 
-    temporal_coverage = TextLine(title=u"Temporal coverage", required=False)
+    # temporal_coverage = TextLine(title=u"Temporal coverage", required=False)
+    # geo_coverage = TextLine(title=u"Geographical coverage", required=False)
 
-    geo_coverage = TextLine(title=u"Geographical coverage", required=False)
+    temporal_coverage = JSONField(
+        title=u'Temporal coverage',
+        required=False,
+        widget="temporal",
+        default={}
+    )
+
+    temporal_coverage = JSONField(
+        title=u'Geographical coverage',
+        required=False,
+        widget="geolocation",
+        default={}
+    )
 
     data_source_info = RichText(title=u"Data source information",
                                 description=u"", required=False)

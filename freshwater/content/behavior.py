@@ -10,6 +10,7 @@ class CatalogueMetadata(MetadataBase):
     description = DCFieldProperty(ICatalogueMetadata["description"])
     lineage = DCFieldProperty(ICatalogueMetadata["lineage"])
     original_source = DCFieldProperty(ICatalogueMetadata["original_source"])
+    embed_url = DCFieldProperty(ICatalogueMetadata["original_source"])
     organisation = DCFieldProperty(ICatalogueMetadata["organisation"])
     dpsir_type = DCFieldProperty(ICatalogueMetadata["dpsir_type"])
     topic = DCFieldProperty(ICatalogueMetadata["topic"])
