@@ -89,6 +89,8 @@ class ICatalogueMetadata(model.Schema):
 
     publication_year = Int(title=u"Publication year", required=True)
 
+    license_copyright = TextLine(title=_(u"label_title", default=u"Rights"), required=False)
+
     temporal_coverage = JSONField(
         title=u"Temporal coverage", required=False, widget="temporal", default={}
     )
