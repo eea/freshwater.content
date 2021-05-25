@@ -65,13 +65,12 @@ class ICatalogueMetadata(model.Schema):
 
     embed_url = TextLine(
         title=u"Embed URL",
-        description=u"If EEA link, can trigger "
-                    u"automatic fetching of EEA information",
         required=False,
     )
 
-    organisation = Choice(
+    publisher = Choice(
         title=u"Organisation",
+        description=u"The responsible organisation for this item",
         required=True,
         vocabulary="wise_organisations_vocabulary",
         default="EEA",
@@ -84,7 +83,7 @@ class ICatalogueMetadata(model.Schema):
     # theme = Choice(title=u"Theme", required=False,
     #                vocabulary="wise_themes_vocabulary")
 
-    topic = Text(title=u"Topic", required=False)
+    category = Text(title=u"Category", required=False)
 
     # subtheme = Choice(title=u"Subtheme", required=False,
     #                   vocabulary="wise_subthemes_vocabulary")
