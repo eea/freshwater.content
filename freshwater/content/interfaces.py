@@ -4,12 +4,12 @@ from plone.app.dexterity import _
 from plone.app.textfield import RichText
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
+from plone.schema import JSONField
 from plone.supermodel import model
 from zope.interface import provider
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
                          TextLine, Tuple)
-from plone.schema import JSONField
 
 
 class IFreshwaterContentLayer(IDefaultBrowserLayer):
@@ -38,16 +38,12 @@ class ICatalogueMetadata(model.Schema):
     """
 
     # default fieldset
-    title = TextLine(
-        title=_(u'label_title', default=u'Title'),
-        required=True
-    )
+    title = TextLine(title=_(u"label_title", default=u"Title"), required=True)
 
     description = Text(
-        title=_(u'label_description', default=u'Description'),
+        title=_(u"label_description", default=u"Description"),
         description=_(
-            u'help_description',
-            default=u'Used in item listings and search results.'
+            u"help_description", default=u"Used in item listings and search results."
         ),
         required=True,
     )
@@ -59,12 +55,13 @@ class ICatalogueMetadata(model.Schema):
 
     original_source = TextLine(
         title=u"Original source",
-        description=u"If EEA link, can trigger "
-                    u"automatic fetching of EEA information",
+        # description=u"If EEA link, can trigger "
+        # u"automatic fetching of EEA information",
     )
 
     embed_url = TextLine(
         title=u"Embed URL",
+        description=u"Tableau or webmap URL",
         required=False,
     )
 
@@ -93,21 +90,16 @@ class ICatalogueMetadata(model.Schema):
     publication_year = Int(title=u"Publication year", required=True)
 
     temporal_coverage = JSONField(
-        title=u'Temporal coverage',
-        required=False,
-        widget="temporal",
-        default={}
+        title=u"Temporal coverage", required=False, widget="temporal", default={}
     )
 
     geo_coverage = JSONField(
-        title=u'Geographical coverage',
-        required=False,
-        widget="geolocation",
-        default={}
+        title=u"Geographical coverage", required=False, widget="geolocation", default={}
     )
 
-    data_source_info = RichText(title=u"Data source information",
-                                description=u"", required=False)
+    data_source_info = RichText(
+        title=u"Data source information", description=u"", required=False
+    )
 
     thumbnail = NamedBlobImage(
         title=u"Preview image (thumbnail)",

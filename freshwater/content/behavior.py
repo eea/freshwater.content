@@ -1,11 +1,12 @@
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 
-from .interfaces import ICatalogueMetadata  #, IExternalLinks
+from .interfaces import ICatalogueMetadata  # , IExternalLinks
 
 
 class CatalogueMetadata(MetadataBase):
     """Freshwater metadata"""
+
     title = DCFieldProperty(ICatalogueMetadata["title"])
     description = DCFieldProperty(ICatalogueMetadata["description"])
     lineage = DCFieldProperty(ICatalogueMetadata["lineage"])
