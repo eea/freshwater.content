@@ -115,6 +115,18 @@ def dpsir_vocabulary(context):
     return values_to_vocab(dpsir)
 
 
+report_type = [
+    "Technical report",
+    "Scientific report",
+    "Briefing",
+]
+
+
+@provider(IVocabularyFactory)
+def report_vocabulary(context):
+    return values_to_vocab(report_type)
+
+
 themes = [
     "Climate change",
     "Contaminants",

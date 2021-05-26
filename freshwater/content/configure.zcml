@@ -21,6 +21,17 @@
     marker=".interfaces.ICatalogueMetadata"
     />
 
+
+  <plone:behavior
+    name="freshwater.report-datatype"
+    title="Freshwater Report types"
+    description="Adds Freshwater Report types field"
+    factory=".behavior.ReportDataTypes"
+    provides=".interfaces.IReportDataTypes"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".interfaces.IReportDataTypes"
+    />
+
   <genericsetup:registerProfile
     name="metadata_catalogue"
     title="Freshwater Metadata Catalogue"
@@ -47,6 +58,11 @@
   <utility
       name="wise_dpsir_vocabulary"
       component=".vocabulary.dpsir_vocabulary"
+      />
+
+  <utility
+      name="wise_report_vocabulary"
+      component=".vocabulary.report_vocabulary"
       />
 
 </configure>

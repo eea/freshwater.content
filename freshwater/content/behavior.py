@@ -1,7 +1,7 @@
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 
-from .interfaces import ICatalogueMetadata  # , IExternalLinks
+from .interfaces import (ICatalogueMetadata, IReportDataTypes)  # , IExternalLinks
 
 
 class CatalogueMetadata(MetadataBase):
@@ -22,3 +22,9 @@ class CatalogueMetadata(MetadataBase):
     geo_coverage = DCFieldProperty(ICatalogueMetadata["geo_coverage"])
     data_source_info = DCFieldProperty(ICatalogueMetadata["data_source_info"])
     thumbnail = DCFieldProperty(ICatalogueMetadata["thumbnail"])
+
+
+class ReportDataTypes(MetadataBase):
+    """Freshwater Report data types"""
+
+    report_type = DCFieldProperty(IReportDataTypes["report_type"])

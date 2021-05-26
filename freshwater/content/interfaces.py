@@ -107,3 +107,15 @@ class ICatalogueMetadata(model.Schema):
         title=u"Preview image (thumbnail)",
         required=False,
     )
+
+
+@provider(IFormFieldProvider)
+class IReportDataTypes(model.Schema):
+    """Freswater Report type
+    """
+
+    report_type = Choice(
+        title=u"Report type",
+        required=False,
+        vocabulary="wise_report_vocabulary"
+    )
