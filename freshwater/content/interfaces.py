@@ -111,7 +111,7 @@ class ICatalogueMetadata(model.Schema):
 
 @provider(IFormFieldProvider)
 class IReportDataTypes(model.Schema):
-    """Freswater Report type
+    """Freshwater Report type
     """
 
     report_type = Choice(
