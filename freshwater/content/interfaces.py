@@ -55,6 +55,7 @@ class ICatalogueMetadata(model.Schema):
 
     original_source = TextLine(
         title=u"Original source",
+        required=False,
         # description=u"If EEA link, can trigger "
         # u"automatic fetching of EEA information",
     )
@@ -100,13 +101,17 @@ class ICatalogueMetadata(model.Schema):
     )
 
     data_source_info = RichText(
-        title=u"Data source information", description=u"", required=False
+        title=u"Data source information", description=u"Rich text, double click for toolbar.", required=False
     )
 
-    thumbnail = NamedBlobImage(
-        title=u"Preview image (thumbnail)",
-        required=False,
+    external_links = RichText(
+        title=u"External links", description=u"Rich text, double click for toolbar.", required=False,
     )
+
+    # thumbnail = NamedBlobImage(
+    #     title=u"Preview image (thumbnail)",
+    #     required=False,
+    # )
 
 
 @provider(IFormFieldProvider)

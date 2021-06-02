@@ -20,8 +20,9 @@ class CatalogueMetadata(MetadataBase):
     license_copyright = DCFieldProperty(ICatalogueMetadata["license_copyright"])
     temporal_coverage = DCFieldProperty(ICatalogueMetadata["temporal_coverage"])
     geo_coverage = DCFieldProperty(ICatalogueMetadata["geo_coverage"])
+    external_links = DCFieldProperty(ICatalogueMetadata["external_links"])
     data_source_info = DCFieldProperty(ICatalogueMetadata["data_source_info"])
-    thumbnail = DCFieldProperty(ICatalogueMetadata["thumbnail"])
+    # thumbnail = DCFieldProperty(ICatalogueMetadata["thumbnail"])
 
 
 class ReportDataTypes(MetadataBase):
