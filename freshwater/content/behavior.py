@@ -15,7 +15,7 @@ class CatalogueMetadata(MetadataBase):
     publisher = DCFieldProperty(ICatalogueMetadata["publisher"])
     dpsir_type = DCFieldProperty(ICatalogueMetadata["dpsir_type"])
     category = DCFieldProperty(ICatalogueMetadata["category"])
-    tags = DCFieldProperty(ICatalogueMetadata["tags"])
+    # tags = DCFieldProperty(ICatalogueMetadata["tags"])
     publication_year = DCFieldProperty(ICatalogueMetadata["publication_year"])
     license_copyright = DCFieldProperty(ICatalogueMetadata["license_copyright"])
     temporal_coverage = DCFieldProperty(ICatalogueMetadata["temporal_coverage"])

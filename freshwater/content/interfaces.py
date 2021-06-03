@@ -86,7 +86,7 @@ class ICatalogueMetadata(model.Schema):
     # subtheme = Choice(title=u"Subtheme", required=False,
     #                   vocabulary="wise_subthemes_vocabulary")
 
-    tags = Text(title=u"Tags", required=False)
+    # tags = Text(title=u"Tags", required=False)
 
     publication_year = Int(title=u"Publication year", required=True)
 
