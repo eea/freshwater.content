@@ -13,15 +13,16 @@ class CatalogueMetadata(MetadataBase):
     original_source = DCFieldProperty(ICatalogueMetadata["original_source"])
     embed_url = DCFieldProperty(ICatalogueMetadata["original_source"])
     publisher = DCFieldProperty(ICatalogueMetadata["publisher"])
+    legislative_reference = DCFieldProperty(ICatalogueMetadata["legislative_reference"])
     dpsir_type = DCFieldProperty(ICatalogueMetadata["dpsir_type"])
     category = DCFieldProperty(ICatalogueMetadata["category"])
-    # tags = DCFieldProperty(ICatalogueMetadata["tags"])
     publication_year = DCFieldProperty(ICatalogueMetadata["publication_year"])
     license_copyright = DCFieldProperty(ICatalogueMetadata["license_copyright"])
     temporal_coverage = DCFieldProperty(ICatalogueMetadata["temporal_coverage"])
     geo_coverage = DCFieldProperty(ICatalogueMetadata["geo_coverage"])
     external_links = DCFieldProperty(ICatalogueMetadata["external_links"])
     data_source_info = DCFieldProperty(ICatalogueMetadata["data_source_info"])
+    # tags = DCFieldProperty(ICatalogueMetadata["tags"])
     # thumbnail = DCFieldProperty(ICatalogueMetadata["thumbnail"])
 
 

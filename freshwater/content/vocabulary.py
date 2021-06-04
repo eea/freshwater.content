@@ -127,6 +127,36 @@ def report_vocabulary(context):
     return values_to_vocab(report_type)
 
 
+legislative_reference = [
+    "Water Framework Directive",
+    "Floods Directive",
+    "Bathing Water Directive",
+    "Nitrates Directive",
+    "Urban Waste Water Treatment Directive",
+    "Drinking Water Directive",
+    "Marine Strategy Framework Directive",
+    "Habitats Directive",
+    "Birds Directive",
+]
+
+@provider(IVocabularyFactory)
+def legislative_vocabulary(context):
+    return values_to_vocab(legislative_reference)
+
+
+category = [
+    "Water ecological status",
+    "Water quality",
+    "Status and relevant pressure",
+    "Physico-chemical and biological status",
+    "Urban waste water generation and emission"
+]
+
+@provider(IVocabularyFactory)
+def category_vocabulary(context):
+    return values_to_vocab(category)
+
+
 themes = [
     "Climate change",
     "Contaminants",

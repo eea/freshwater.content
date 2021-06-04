@@ -11,6 +11,8 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
                          TextLine, Tuple)
 
+from zope import schema
+
 
 class IFreshwaterContentLayer(IDefaultBrowserLayer):
     """Marker interface that defines a browser layer."""
@@ -81,7 +83,17 @@ class ICatalogueMetadata(model.Schema):
     # theme = Choice(title=u"Theme", required=False,
     #                vocabulary="wise_themes_vocabulary")
 
-    category = Text(title=u"Category", required=False)
+    category = Choice(
+        title=u"Category",
+        required=False,
+        vocabulary="wise_category_vocabulary"
+    )
+
+    legislative_reference = Choice(
+        title=u"Legislative reference",
+        required=False,
+        vocabulary="wise_legislative_vocabulary",
+    )
 
     # subtheme = Choice(title=u"Subtheme", required=False,
     #                   vocabulary="wise_subthemes_vocabulary")
