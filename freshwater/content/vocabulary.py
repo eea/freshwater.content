@@ -1,4 +1,5 @@
-from zope.interface import provider
+from plone.app.vocabularies.catalog import KeywordsVocabulary as BKV
+from zope.interface import implementer, provider  # alsoProvides,
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 
@@ -77,8 +78,8 @@ UK	UK	United Kingdom
     "\n"
 )
 
-countries = [l.strip() for l in countries if l.strip()]
-countries = [l.split("\t") for l in countries]
+countries = [line.strip() for line in countries if line.strip()]
+countries = [line.split("\t") for line in countries]
 
 
 @provider(IVocabularyFactory)
@@ -139,22 +140,35 @@ legislative_reference = [
     "Birds Directive",
 ]
 
+
 @provider(IVocabularyFactory)
 def legislative_vocabulary(context):
     return values_to_vocab(legislative_reference)
 
 
-category = [
-    "Water ecological status",
-    "Water quality",
-    "Status and relevant pressure",
-    "Physico-chemical and biological status",
-    "Urban waste water generation and emission"
-]
+# category = [
+#     "Water ecological status",
+#     "Water quality",
+#     "Status and relevant pressure",
+#     "Physico-chemical and biological status",
+#     "Urban waste water generation and emission"
+# ]
+#
+# @provider(IVocabularyFactory)
+# def category_vocabulary(context):
+#     return values_to_vocab(category)
 
-@provider(IVocabularyFactory)
-def category_vocabulary(context):
-    return values_to_vocab(category)
+
+@implementer(IVocabularyFactory)
+class KeywordsVocabulary(BKV):
+    def __init__(self, index):
+        self.keyword_index = index
+
+    # def __call__(self, *args, **kwargs):
+    #     return super(KeywordsVocabulary, self).__call__(*args, **kwargs)
+
+
+CategoryVocabularyFactory = KeywordsVocabulary("category")
 
 
 themes = [

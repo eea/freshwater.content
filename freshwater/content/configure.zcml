@@ -62,7 +62,7 @@
 
   <utility
       name="wise_category_vocabulary"
-      component=".vocabulary.category_vocabulary"
+      component=".vocabulary.CategoryVocabularyFactory"
       />
 
   <utility

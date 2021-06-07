@@ -2,16 +2,17 @@
 
 from plone.app.dexterity import _
 from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
 from plone.schema import JSONField
 from plone.supermodel import model
+from zope import schema
 from zope.interface import provider
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
                          TextLine, Tuple)
-
-from zope import schema
 
 
 class IFreshwaterContentLayer(IDefaultBrowserLayer):
@@ -83,10 +84,18 @@ class ICatalogueMetadata(model.Schema):
     # theme = Choice(title=u"Theme", required=False,
     #                vocabulary="wise_themes_vocabulary")
 
-    category = Choice(
+    # category = Choice(
+    #     title=u"Category",
+    #     required=False,
+    #     vocabulary="wise_category_vocabulary"
+    # )
+    category = TextLine(
         title=u"Category",
         required=False,
-        vocabulary="wise_category_vocabulary"
+        # vocabulary="wise_category_vocabulary"
+    )
+    directives.widget(
+        "category", AjaxSelectFieldWidget, vocabulary="wise_category_vocabulary"
     )
 
     legislative_reference = Choice(
@@ -102,7 +111,9 @@ class ICatalogueMetadata(model.Schema):
 
     publication_year = Int(title=u"Publication year", required=True)
 
-    license_copyright = TextLine(title=_(u"label_title", default=u"Rights"), required=False)
+    license_copyright = TextLine(
+        title=_(u"label_title", default=u"Rights"), required=False
+    )
 
     temporal_coverage = JSONField(
         title=u"Temporal coverage", required=False, widget="temporal", default={}
@@ -113,11 +124,15 @@ class ICatalogueMetadata(model.Schema):
     )
 
     data_source_info = RichText(
-        title=u"Data source information", description=u"Rich text, double click for toolbar.", required=False
+        title=u"Data source information",
+        description=u"Rich text, double click for toolbar.",
+        required=False,
     )
 
     external_links = RichText(
-        title=u"External links", description=u"Rich text, double click for toolbar.", required=False,
+        title=u"External links",
+        description=u"Rich text, double click for toolbar.",
+        required=False,
     )
 
     # thumbnail = NamedBlobImage(
@@ -128,11 +143,8 @@ class ICatalogueMetadata(model.Schema):
 
 @provider(IFormFieldProvider)
 class IReportDataTypes(model.Schema):
-    """Freshwater Report type
-    """
+    """Freshwater Report type"""
 
     report_type = Choice(
-        title=u"Report type",
-        required=False,
-        vocabulary="wise_report_vocabulary"
+        title=u"Report type", required=False, vocabulary="wise_report_vocabulary"
     )
