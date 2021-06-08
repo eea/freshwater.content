@@ -90,7 +90,7 @@ class ICatalogueMetadata(model.Schema):
     #     vocabulary="wise_category_vocabulary"
     # )
     category = TextLine(
-        title=u"Category",
+        title=u"Topic",
         required=False,
         # vocabulary="wise_category_vocabulary"
     )
