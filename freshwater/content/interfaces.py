@@ -64,8 +64,13 @@ class ICatalogueMetadata(model.Schema):
     )
 
     embed_url = TextLine(
+        title=u"Tableau URL",
+        required=False,
+    )
+
+    webmap_url = TextLine(
         title=u"Embed URL",
-        description=u"Tableau or webmap URL",
+        description=u"Webmap URL",
         required=False,
     )
 
@@ -84,16 +89,12 @@ class ICatalogueMetadata(model.Schema):
     # theme = Choice(title=u"Theme", required=False,
     #                vocabulary="wise_themes_vocabulary")
 
-    # category = Choice(
-    #     title=u"Category",
-    #     required=False,
-    #     vocabulary="wise_category_vocabulary"
-    # )
+
     category = TextLine(
         title=u"Topic",
         required=False,
-        # vocabulary="wise_category_vocabulary"
     )
+
     directives.widget(
         "category", AjaxSelectFieldWidget, vocabulary="wise_category_vocabulary"
     )
