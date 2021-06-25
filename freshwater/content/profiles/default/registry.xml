@@ -11,6 +11,7 @@
       <element>plone.app.querystring.operation.selection.all</element>
     </value>
     <value key="group" i18n:translate="">Metadata</value>
+    <value key="vocabulary">wise_organisations_vocabulary</value>
   </records>
 </registry>
 
