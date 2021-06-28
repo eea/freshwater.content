@@ -1,7 +1,7 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
   i18n:domain="plone">
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater_publisher">
+    prefix="plone.app.querystring.field.publisher">
     <value key="title" i18n:translate="">Publisher</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
@@ -15,7 +15,7 @@
   </records>
 
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater_legislation">
+    prefix="plone.app.querystring.field.legislation">
     <value key="title" i18n:translate="">Legislation</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
@@ -29,7 +29,7 @@
   </records>
 
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater_category">
+    prefix="plone.app.querystring.field.category">
     <value key="title" i18n:translate="">Category</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
