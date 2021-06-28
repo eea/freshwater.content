@@ -1,11 +1,11 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
   i18n:domain="plone">
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater.publisher">
+    prefix="plone.app.querystring.field.freshwater_publisher">
     <value key="title" i18n:translate="">Publisher</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
-    <value key="sortable">False</value>
+    <value key="sortable">True</value>
     <value key="operations">
       <element>plone.app.querystring.operation.selection.any</element>
       <element>plone.app.querystring.operation.selection.all</element>
@@ -15,11 +15,11 @@
   </records>
 
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater.legislation">
+    prefix="plone.app.querystring.field.freshwater_legislation">
     <value key="title" i18n:translate="">Legislation</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
-    <value key="sortable">False</value>
+    <value key="sortable">True</value>
     <value key="operations">
       <element>plone.app.querystring.operation.selection.any</element>
       <element>plone.app.querystring.operation.selection.all</element>
@@ -29,11 +29,11 @@
   </records>
 
   <records interface="plone.app.querystring.interfaces.IQueryField"
-    prefix="plone.app.querystring.field.freshwater.category">
+    prefix="plone.app.querystring.field.freshwater_category">
     <value key="title" i18n:translate="">Category</value>
     <value key="description" i18n:translate=""></value>
     <value key="enabled">True</value>
-    <value key="sortable">False</value>
+    <value key="sortable">True</value>
     <value key="operations">
       <element>plone.app.querystring.operation.selection.any</element>
       <element>plone.app.querystring.operation.selection.all</element>
