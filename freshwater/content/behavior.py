@@ -1,7 +1,8 @@
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 
-from .interfaces import (ICatalogueMetadata, IReportDataTypes)  # , IExternalLinks
+from .interfaces import (ICatalogueMetadata,  # , IExternalLinks
+                         IReportDataTypes)
 
 
 class CatalogueMetadata(MetadataBase):
@@ -14,12 +15,15 @@ class CatalogueMetadata(MetadataBase):
     embed_url = DCFieldProperty(ICatalogueMetadata["embed_url"])
     webmap_url = DCFieldProperty(ICatalogueMetadata["webmap_url"])
     publisher = DCFieldProperty(ICatalogueMetadata["publisher"])
-    legislative_reference = DCFieldProperty(ICatalogueMetadata["legislative_reference"])
+    legislative_reference = DCFieldProperty(
+        ICatalogueMetadata["legislative_reference"])
     dpsir_type = DCFieldProperty(ICatalogueMetadata["dpsir_type"])
     category = DCFieldProperty(ICatalogueMetadata["category"])
     publication_year = DCFieldProperty(ICatalogueMetadata["publication_year"])
-    license_copyright = DCFieldProperty(ICatalogueMetadata["license_copyright"])
-    temporal_coverage = DCFieldProperty(ICatalogueMetadata["temporal_coverage"])
+    license_copyright = DCFieldProperty(
+        ICatalogueMetadata["license_copyright"])
+    temporal_coverage = DCFieldProperty(
+        ICatalogueMetadata["temporal_coverage"])
     geo_coverage = DCFieldProperty(ICatalogueMetadata["geo_coverage"])
     external_links = DCFieldProperty(ICatalogueMetadata["external_links"])
     data_source_info = DCFieldProperty(ICatalogueMetadata["data_source_info"])

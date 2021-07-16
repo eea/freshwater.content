@@ -5,10 +5,10 @@ from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
-from plone.namedfile.field import NamedBlobImage
+# from plone.namedfile.field import NamedBlobImage
 from plone.schema import JSONField
 from plone.supermodel import model
-from zope import schema
+# from zope import schema
 from zope.interface import provider
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
@@ -89,21 +89,20 @@ class ICatalogueMetadata(model.Schema):
     # theme = Choice(title=u"Theme", required=False,
     #                vocabulary="wise_themes_vocabulary")
 
+    directives.widget("category", vocabulary="wise_category_vocabulary")
+    category = Tuple(title=u"Topic",
+                     value_type=TextLine(
+                         title=u"Single topic",
+                         required=False,
+                     ))
 
-    category = TextLine(
-        title=u"Topic",
-        required=False,
-    )
-
-    directives.widget(
-        "category", AjaxSelectFieldWidget, vocabulary="wise_category_vocabulary"
-    )
-
-    legislative_reference = Choice(
-        title=u"Legislative reference",
-        required=False,
-        vocabulary="wise_legislative_vocabulary",
-    )
+    legislative_reference = Tuple(
+        title="Legislative reference",
+        value_type=Choice(
+            title=u"Single legislative reference",
+            required=False,
+            vocabulary="wise_legislative_vocabulary",
+        ))
 
     # subtheme = Choice(title=u"Subtheme", required=False,
     #                   vocabulary="wise_subthemes_vocabulary")
@@ -142,7 +141,7 @@ class ICatalogueMetadata(model.Schema):
     # )
 
 
-@provider(IFormFieldProvider)
+@ provider(IFormFieldProvider)
 class IReportDataTypes(model.Schema):
     """Freshwater Report type"""
 
