@@ -90,17 +90,19 @@ class ICatalogueMetadata(model.Schema):
     #                vocabulary="wise_themes_vocabulary")
 
     directives.widget("category", vocabulary="wise_category_vocabulary")
-    category = Tuple(title=u"Topic",
-                     value_type=TextLine(
-                         title=u"Single topic",
-                         required=False,
-                     ))
+    category = Tuple(
+        title=u"Topics",
+        required=False,
+        missing_value=(),
+        value_type=TextLine(
+            title=u"Single topic",
+        ))
 
     legislative_reference = Tuple(
         title="Legislative reference",
+        required=False,
         value_type=Choice(
             title=u"Single legislative reference",
-            required=False,
             vocabulary="wise_legislative_vocabulary",
         ))
 
