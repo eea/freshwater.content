@@ -2,17 +2,17 @@
 
 from plone.app.dexterity import _
 from plone.app.textfield import RichText
-from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
-# from plone.namedfile.field import NamedBlobImage
 from plone.schema import JSONField
 from plone.supermodel import model
-# from zope import schema
 from zope.interface import provider
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-from zope.schema import (URI, Bool, Choice, Date, Datetime, Int, List, Text,
-                         TextLine, Tuple)
+from zope.schema import Choice, Int, Text, TextLine, Tuple
+
+# from plone.app.z3cform.widget import AjaxSelectFieldWidget
+# from plone.namedfile.field import NamedBlobImage
+# from zope import schema
 
 
 class IFreshwaterContentLayer(IDefaultBrowserLayer):
@@ -118,11 +118,13 @@ class ICatalogueMetadata(model.Schema):
     )
 
     temporal_coverage = JSONField(
-        title=u"Temporal coverage", required=False, widget="temporal", default={}
+        title=u"Temporal coverage",
+        required=False, widget="temporal", default={}
     )
 
     geo_coverage = JSONField(
-        title=u"Geographical coverage", required=False, widget="geolocation", default={}
+        title=u"Geographical coverage",
+        required=False, widget="geolocation", default={}
     )
 
     data_source_info = RichText(
@@ -148,5 +150,6 @@ class IReportDataTypes(model.Schema):
     """Freshwater Report type"""
 
     report_type = Choice(
-        title=u"Report type", required=False, vocabulary="wise_report_vocabulary"
+        title=u"Report type",
+        required=False, vocabulary="wise_report_vocabulary"
     )
