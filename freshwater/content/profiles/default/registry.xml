@@ -42,4 +42,17 @@
     <value key="vocabulary">wise_category_vocabulary</value>
   </records>
 
+  <records interface="plone.app.querystring.interfaces.IQueryField"
+    prefix="plone.app.querystring.field.country_code">
+    <value key="title" i18n:translate="">Country Code</value>
+    <value key="description" i18n:translate=""></value>
+    <value key="enabled">True</value>
+    <value key="sortable">True</value>
+    <value key="operations">
+      <element>plone.app.querystring.operation.string.is</element>
+    </value>
+    <value key="group" i18n:translate="">Freshwater</value>
+    <value key="vocabulary">wise_countries_complete_vocabulary</value>
+  </records>
+
 </registry>

@@ -75,4 +75,9 @@
       component=".vocabulary.report_vocabulary"
       />
 
+  <utility
+      name="wise_countries_complete_vocabulary"
+      component=".vocabulary.countries_complete_vocabulary"
+      />
+
 </configure>

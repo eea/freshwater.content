@@ -81,10 +81,25 @@ UK	UK	United Kingdom
 countries = [line.strip() for line in countries if line.strip()]
 countries = [line.split("\t") for line in countries]
 
-
 @provider(IVocabularyFactory)
 def countries_vocabulary(context):
     vocab = list_values_to_vocab(countries)
+    return vocab
+
+
+countries_extra = """
+CH	CH	Switzerland
+NO	NO	Norway
+""".split("\n")
+
+countries_extra = [line.strip() for line in countries_extra if line.strip()]
+countries_extra = [line.split("\t") for line in countries_extra]
+countries_extra = countries + countries_extra
+countries_extra = sorted(countries_extra, key=lambda i: i[2])
+
+@provider(IVocabularyFactory)
+def countries_complete_vocabulary(context):
+    vocab = list_values_to_vocab(countries_extra)
     return vocab
 
 
