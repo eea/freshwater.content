@@ -88,6 +88,7 @@ def countries_vocabulary(context):
 
 
 countries_extra = """
+CZ	CZ	Czechia
 CH	CH	Switzerland
 NO	NO	Norway
 """.split("\n")
