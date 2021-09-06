@@ -50,6 +50,9 @@ def values_to_vocab(values):
     return vocab
 
 
+# TODO where is this list used? There are 27 EU Member states, maybe make
+# a complete list with all the member states and add into 'countries_extra'
+# non EU countries?
 countries = """
 BE	BE	Belgium
 BG	BG	Bulgaria
@@ -88,9 +91,13 @@ def countries_vocabulary(context):
 
 
 countries_extra = """
+AT	AT	Austria
 CZ	CZ	Czechia
 CH	CH	Switzerland
+HU	HU	Hungary
+LU	LU	Luxembourg
 NO	NO	Norway
+SK	SK	Slovakia
 """.split("\n")
 
 countries_extra = [line.strip() for line in countries_extra if line.strip()]
