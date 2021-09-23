@@ -11,6 +11,14 @@
   <include package=".browser" />
   <include package=".upgrades" />
 
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".api.BookmarksGet"
+    name="@bookmarks-all"
+    permission="zope2.View"
+    />
+
   <plone:behavior
     name="freshwater.catalogue-metadata"
     title="Freshwater Catalogue metadata"
