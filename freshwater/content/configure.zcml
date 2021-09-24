@@ -18,6 +18,14 @@
     name="@bookmarks-all"
     permission="zope2.View"
     />
+   
+   <plone:service
+    method="PUT"
+    for="zope.interface.Interface"
+    factory=".api.BookmarkPut"
+    name="@bookmark-update"
+    permission="zope2.View"
+    />
 
   <plone:behavior
     name="freshwater.catalogue-metadata"
