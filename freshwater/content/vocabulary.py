@@ -95,6 +95,7 @@ AT	AT	Austria
 CZ	CZ	Czechia
 CH	CH	Switzerland
 HU	HU	Hungary
+IS	IS	Iceland
 LU	LU	Luxembourg
 NO	NO	Norway
 SK	SK	Slovakia
