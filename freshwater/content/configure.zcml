@@ -11,21 +11,21 @@
   <include package=".browser" />
   <include package=".upgrades" />
 
-  <!-- <plone:service
+  <plone:service
     method="GET"
     for="zope.interface.Interface"
     factory=".api.BookmarksGet"
     name="@bookmarks-all"
     permission="zope2.View"
     />
-   
+
    <plone:service
     method="PUT"
     for="zope.interface.Interface"
     factory=".api.BookmarkPut"
     name="@bookmark-update"
     permission="zope2.View"
-    /> -->
+    />
 
   <plone:behavior
     name="freshwater.catalogue-metadata"
