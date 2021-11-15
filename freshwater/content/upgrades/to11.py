@@ -113,7 +113,7 @@ class ResolveUIDDeserializerBase(object):
     order = 1
     block_type = None
     fields = ["url", "href", "provider_url", "link", 'getRemoteUrl',
-              "attachedImage", 'getPath', 'getURL', '@id']
+              "attachedImage", 'attachedimage', 'getPath', 'getURL', '@id']
 
     def __init__(self, context):
         self.context = context
@@ -157,11 +157,6 @@ class ResolveUIDDeserializerBase(object):
                     ]
 
         return dirty
-
-# "data": '
-#  '{"link": {"external": {"external_link": '
-#  '"https://demo-freshwater.eea.europa.eu/data-maps-and-tools/metadata", '
-#  '"target": "_self"}}}
 
 
 class SlateBlockTransformer(object):
@@ -231,9 +226,6 @@ class ContainerBlockFixer(object):
         self.fixer = ResolveUIDDeserializerBase(self.context)
 
     def __call__(self, block):
-        # if block.get('@type') == 'dashboardTabsBlock':
-        #     import pdb
-        #     pdb.set_trace()
         dirty = False
 
         for card in block.get('cards', []):
@@ -292,29 +284,3 @@ def run_upgrade(setup_context):
 
         # if i % 200 == 0:
         #     transaction.savepoint()
-    import pdb
-    pdb.set_trace()
-
-    # def handle_link(self, child):
-    #     if child.get("data", {}).get("url"):
-    #         if 'resolveuid' not in child["data"]["url"]:
-    #             old = child["data"]["url"]
-    #             child["data"]["url"] = path2uid(
-    #                 self.context, clean_url(child["data"]["url"]))
-    #             logger.info("fixed type:'link' in %s (%s) => (%s)",
-    #                         self.context.absolute_url(),
-    #                         old, child["data"]["url"])
-    #             return True
-    #
-    # def handle_dataentity(self, child):
-    #     if child.get('data', {}).get('provider_url'):
-    #         if 'resolveuid' not in child['data']['provider_url']:
-    #             old = child['data']['provider_url']
-    #             child['data']['provider_url'] = path2uid(
-    #                 self.context,
-    #                 clean_url(child['data']['provider_url']))
-    #
-    #             logger.info("fixed type:'dataentity' in %s (%s) => (%s)",
-    #                         self.context.absolute_url(), old,
-    #                         child['data']['provider_url'])
-    #             return True
