@@ -15,4 +15,14 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeStep
+    title="Migrate card URLs to resolveuid"
+    description=""
+    profile="freshwater.content:default"
+    source="*"
+    destination="11"
+    handler=".to11.run_upgrade"
+    />
+
+
 </configure>
