@@ -2,14 +2,57 @@
   xmlns="http://namespaces.zope.org/zope"
   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   xmlns:i18n="http://namespaces.zope.org/i18n"
+  xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:monkey="http://namespaces.plone.org/monkey"
   i18n_domain="eea">
 
   <i18n:registerTranslations directory="locales" />
 
+  <include package="collective.monkeypatcher" />
+
   <include file="profiles.zcml" />
   <include package=".browser" />
   <include package=".upgrades" />
+
+  <!-- <monkey:patch -->
+  <!--   description="This works around issue http://some.tracker.tld/ticket/123" -->
+  <!--   class="plone.restapi.services.breadcrumbs.get.Breadcrumbs" -->
+  <!--   original="__call__" -->
+  <!--   replacement=".api.breadcrumbscall" -->
+  <!--   /> -->
+
+  <browser:page
+    for="*"
+    name="breadcrumbs_view"
+    class=".overrides.PhysicalNavigationBreadcrumbs"
+    permission="zope.Public"
+    allowed_attributes="breadcrumbs"
+    layer="freshwater.content.interfaces.IFreshwaterContentLayer"
+    />
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory="eea.restapi.api.search.SearchGet"
+    name="@search"
+    permission="zope2.View"
+    layer="freshwater.content.interfaces.IFreshwaterContentLayer"
+    />
+
+  <adapter
+    factory=".api.Breadcrumbs"
+    name="breadcrumbs"
+    />
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".api.BreadcrumbsGet"
+    name="@breadcrumbs"
+    permission="zope2.View"
+    layer="freshwater.content.interfaces.IFreshwaterContentLayer"
+    />
 
   <plone:service
     method="GET"
