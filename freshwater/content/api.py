@@ -1,3 +1,4 @@
+from plone.restapi.interfaces import IExpandableElement
 from collective.bookmarks.api.utils import bookmark_dict_to_json_dict
 from collective.bookmarks.api.utils import get_bookmark_from_request
 from collective.bookmarks.api.utils import get_owner
@@ -7,6 +8,76 @@ from plone.restapi.services import Service
 from zope.interface import alsoProvides
 from repoze.catalog.query import Eq, NotEq
 from zExceptions import NotFound
+from zope.component import adapter
+from zope.component import getMultiAdapter
+from zope.interface import implementer
+from zope.interface import Interface
+
+def breadcrumbscall(self, expand):
+    # import pdb; pdb.set_trace()
+    result = {"breadcrumbs": {"@id": f"{self.context.absolute_url()}/@breadcrumbs"}}
+    if not expand:
+        return result
+
+    portal_state = getMultiAdapter(
+        (self.context, context.request), name="plone_portal_state"
+    )
+    breadcrumbs_view = getMultiAdapter(
+        (self.context, context.request), name="breadcrumbs_view"
+    )
+    items = []
+    for crumb in breadcrumbs_view.breadcrumbs():
+        item = {
+            "title": crumb["Title"],
+            "@id": crumb["absolute_url"],
+        }
+        if crumb.get("nav_title", False):
+            item.update({"title": crumb["nav_title"]})
+
+        items.append(item)
+
+    result["breadcrumbs"]["items"] = items
+    result["breadcrumbs"]["root"] = portal_state.navigation_root().absolute_url()
+    return result
+
+@implementer(IExpandableElement)
+@adapter(Interface, Interface)
+class Breadcrumbs:
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self, expand=False):
+        result = {"breadcrumbs": {"@id": f"{self.context.absolute_url()}/@breadcrumbs-fw"}}
+        if not expand:
+            return result
+
+        portal_state = getMultiAdapter(
+            (self.context, self.request), name="plone_portal_state"
+        )
+        breadcrumbs_view = getMultiAdapter(
+            (self.context, self.request), name="breadcrumbs_view"
+        )
+        items = []
+        for crumb in breadcrumbs_view.breadcrumbs():
+            item = {
+                "title": crumb["Title"],
+                "@id": crumb["absolute_url"],
+            }
+            if crumb.get("nav_title", False):
+                item.update({"title": crumb["nav_title"]})
+
+            items.append(item)
+
+        result["breadcrumbs"]["items"] = items
+        result["breadcrumbs"]["root"] = portal_state.navigation_root().absolute_url()
+        return result
+
+
+class BreadcrumbsGet(Service):
+    def reply(self):
+        breadcrumbs = Breadcrumbs(self.context, self.request)
+        return breadcrumbs(expand=True)["breadcrumbs"]
 
 
 class BookmarksAll(Bookmarks):
@@ -40,7 +111,7 @@ class BookmarksGet(Service):
 
         if bookmarks:
             return [bookmark_dict_to_json_dict(x) for x in bookmarks]
-        
+
         raise NotFound("No such bookmark found.")
 
 
