@@ -39,6 +39,7 @@ class Breadcrumbs:
             item = {
                 "title": crumb["Title"],
                 "@id": crumb["absolute_url"],
+                "review_state": crumb.get('review_state')
             }
             if crumb.get("nav_title", False):
                 item.update({"title": crumb["nav_title"]})

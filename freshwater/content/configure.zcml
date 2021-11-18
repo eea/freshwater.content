@@ -2,6 +2,7 @@
   xmlns="http://namespaces.zope.org/zope"
   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   xmlns:i18n="http://namespaces.zope.org/i18n"
+  xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:plone="http://namespaces.plone.org/plone"
   xmlns:monkey="http://namespaces.plone.org/monkey"
   i18n_domain="eea">
@@ -20,6 +21,15 @@
   <!--   original="__call__" -->
   <!--   replacement=".api.breadcrumbscall" -->
   <!--   /> -->
+
+  <browser:page
+    for="*"
+    name="breadcrumbs_view"
+    class=".overrides.PhysicalNavigationBreadcrumbs"
+    permission="zope.Public"
+    allowed_attributes="breadcrumbs"
+    layer="freshwater.content.interfaces.IFreshwaterContentLayer"
+    />
 
   <plone:service
     method="GET"
