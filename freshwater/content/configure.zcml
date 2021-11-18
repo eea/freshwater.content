@@ -14,12 +14,12 @@
   <include package=".browser" />
   <include package=".upgrades" />
 
-  <monkey:patch
-    description="This works around issue http://some.tracker.tld/ticket/123"
-    class="plone.restapi.services.breadcrumbs.get.Breadcrumbs"
-    original="__call__"
-    replacement=".api.breadcrumbscall"
-    />
+  <!-- <monkey:patch -->
+  <!--   description="This works around issue http://some.tracker.tld/ticket/123" -->
+  <!--   class="plone.restapi.services.breadcrumbs.get.Breadcrumbs" -->
+  <!--   original="__call__" -->
+  <!--   replacement=".api.breadcrumbscall" -->
+  <!--   /> -->
 
   <plone:service
     method="GET"
@@ -30,7 +30,7 @@
     layer="freshwater.content.interfaces.IFreshwaterContentLayer"
     />
 
-  <!-- <adapter
+  <adapter
     factory=".api.Breadcrumbs"
     name="breadcrumbs"
     />
@@ -39,9 +39,10 @@
     method="GET"
     for="zope.interface.Interface"
     factory=".api.BreadcrumbsGet"
-    name="@breadcrumbs-fw"
+    name="@breadcrumbs"
     permission="zope2.View"
-    /> -->
+    layer="freshwater.content.interfaces.IFreshwaterContentLayer"
+    />
 
   <plone:service
     method="GET"
