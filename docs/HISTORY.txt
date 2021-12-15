@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0 - (2021-12-15)
+---------------------------
+* Change: Fix issue caused by missing_value [kreafox]
+
 1.0-dev0 - (unreleased)
 -----------------------
 
