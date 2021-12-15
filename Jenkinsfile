@@ -132,7 +132,7 @@ pipeline {
     stage('Report to SonarQube') {
       when {
         allOf {
-          environment name: 'CHANGE_ID', value: ''
+          environment name: 'SONARQUBE_TAG', value: ''
         }
       }
       steps {
