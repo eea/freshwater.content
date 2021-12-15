@@ -38,7 +38,9 @@ setup(
     zip_safe=False,
         python_requires="==2.7",
         install_requires=[
-        'setuptools',
+            'setuptools',
+            'eea.restapi',
+            'collective.bookmarks'
         # -*- Extra requirements: -*-
     ],
     extras_require={

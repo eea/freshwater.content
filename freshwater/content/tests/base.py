@@ -16,10 +16,8 @@ class EEAFixture(PloneSandboxLayer):
         """ Setup Zope
         """
         import plone.restapi
-        import eea.restapi
         import freshwater.content
         self.loadZCML(package=plone.restapi)
-        self.loadZCML(package=eea.restapi)
         self.loadZCML(package=freshwater.content)
         installProduct(app, 'freshwater.content')
 
