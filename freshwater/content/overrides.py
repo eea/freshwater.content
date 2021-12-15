@@ -1,5 +1,8 @@
+""" overrides.py """
+
 from Acquisition import aq_base
 from Acquisition import aq_inner
+from plone import api
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone import utils
@@ -11,10 +14,9 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import implementer
 
-from plone import api
-
 
 def get_url(item):
+    """get_url"""
     if not item:
         return None
     if hasattr(aq_base(item), 'getURL'):
@@ -24,6 +26,7 @@ def get_url(item):
 
 
 def get_id(item):
+    """get_id"""
     if not item:
         return None
     getId = getattr(item, 'getId')
@@ -34,6 +37,7 @@ def get_id(item):
 
 
 def get_view_url(context):
+    """get_view_url"""
     registry = getUtility(IRegistry)
     view_action_types = registry.get(
         'plone.types_use_view_action_in_listings', [])
@@ -49,13 +53,14 @@ def get_view_url(context):
 
 @implementer(INavigationBreadcrumbs)
 class PhysicalNavigationBreadcrumbs(BrowserView):
-
+    """PhysicalNavigationBreadcrumbs"""
     def breadcrumbs(self):
+        """breadcrumbs"""
         context = aq_inner(self.context)
         request = self.request
         container = utils.parent(context)
 
-        name, item_url = get_view_url(context)
+        _, item_url = get_view_url(context)
         state = api.content.get_state(self.context, default='')
 
         if container is None:

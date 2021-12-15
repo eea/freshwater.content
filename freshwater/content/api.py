@@ -1,30 +1,32 @@
-from freshwater.content.interfaces import IFreshwaterContentLayer
-from plone.restapi.interfaces import IExpandableElement
+""" api.py """
+
 from collective.bookmarks.api.utils import bookmark_dict_to_json_dict
 from collective.bookmarks.api.utils import get_bookmark_from_request
 from collective.bookmarks.api.utils import get_owner
 from collective.bookmarks.storage import Bookmarks
+from plone.restapi.interfaces import IExpandableElement
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.restapi.services import Service
-from zope.interface import alsoProvides
+from zope.component import adapter, getMultiAdapter
+from zope.interface import alsoProvides, implementer, Interface
 from repoze.catalog.query import Eq, NotEq
 from zExceptions import NotFound
-from zope.component import adapter
-from zope.component import getMultiAdapter
-from zope.interface import implementer
-from zope.interface import Interface
+
+from freshwater.content.interfaces import IFreshwaterContentLayer
 
 
 @implementer(IExpandableElement)
 @adapter(Interface, IFreshwaterContentLayer)
-class Breadcrumbs:
+class Breadcrumbs(object):
+    """Breadcrumbs"""
     def __init__(self, context, request):
         self.context = context
         self.request = request
 
     def __call__(self, expand=False):
         result = {"breadcrumbs": {
-            "@id": f"{self.context.absolute_url()}/@breadcrumbs"}}
+            "@id": "{}".format(self.context.absolute_url())}}
+            # "@id": f"{self.context.absolute_url()}/@breadcrumbs"}}
         if not expand:
             return result
 
@@ -53,12 +55,15 @@ class Breadcrumbs:
 
 
 class BreadcrumbsGet(Service):
+    """BreadcrumbsGet"""
     def reply(self):
+        """reply"""
         breadcrumbs = Breadcrumbs(self.context, self.request)
         return breadcrumbs(expand=True)["breadcrumbs"]
 
 
 class BookmarksAll(Bookmarks):
+    """BookmarksAll"""
     def fetch_all(self, query):
         """fetch all bookmarks
 
@@ -71,6 +76,7 @@ class BookmarksAll(Bookmarks):
 
 
 class BookmarksGet(Service):
+    """BookmarksGet"""
     def reply(self):
         """get all bookmarks
 
@@ -79,7 +85,8 @@ class BookmarksGet(Service):
         bookmark = BookmarksAll()
         try:
             owner = get_owner(request=self.request)
-        except:
+        # not sure if Exception covers all exceptions
+        except Exception:
             owner = '__anonym__'
 
         query_eq = Eq("owner", owner)
@@ -95,6 +102,7 @@ class BookmarksGet(Service):
 
 
 class BookmarkPut(Service):
+    """BookmarkPut"""
     def reply(self):
         """update bookmark by
 
