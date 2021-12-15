@@ -3,7 +3,7 @@ pipeline {
 
   environment {
         GIT_NAME = "freshwater.content"
-        SONARQUBE_TAGS = "www.eea.europa.eu"
+        SONARQUBE_TAGS = ""
     }
 
   stages {
