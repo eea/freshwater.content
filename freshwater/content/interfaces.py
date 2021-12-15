@@ -36,8 +36,8 @@ class ICatalogueMetadata(model.Schema):
     keywords    text    n
     Date of Publication date (at least year)    y
     Last modified in WISE Marine    automatic from plone
-    Link        y   the link can be internal or external links (more external, including EEA
-    website and SDI catalogue
+    Link        y   the link can be internal or external links
+        (more external, including EEA website and SDI catalogue
     """
 
     # default fieldset
@@ -46,7 +46,8 @@ class ICatalogueMetadata(model.Schema):
     description = Text(
         title=_(u"label_description", default=u"Description"),
         description=_(
-            u"help_description", default=u"Used in item listings and search results."
+            u"help_description",
+            default=u"Used in item listings and search results."
         ),
         required=True,
     )

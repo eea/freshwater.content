@@ -84,6 +84,7 @@ UK	UK	United Kingdom
 countries = [line.strip() for line in countries if line.strip()]
 countries = [line.split("\t") for line in countries]
 
+
 @provider(IVocabularyFactory)
 def countries_vocabulary(context):
     vocab = list_values_to_vocab(countries)
@@ -105,6 +106,7 @@ countries_extra = [line.strip() for line in countries_extra if line.strip()]
 countries_extra = [line.split("\t") for line in countries_extra]
 countries_extra = countries + countries_extra
 countries_extra = sorted(countries_extra, key=lambda i: i[2])
+
 
 @provider(IVocabularyFactory)
 def countries_complete_vocabulary(context):
@@ -274,7 +276,8 @@ def subthemes_vocabulary(context):
 
 organisations = {
     "EEA": dict(
-        title="European Environment Agency", website="https://www.eea.europa.eu/"
+        title="European Environment Agency",
+        website="https://www.eea.europa.eu/"
     ),
     "DG ENV": dict(
         title="Environment Directorate General of the European Commission ",
@@ -308,7 +311,8 @@ organisations = {
 @provider(IVocabularyFactory)
 def organisations_vocabulary(context):
     terms = [
-        SimpleTerm(acro, acro, info["title"]) for acro, info in organisations.items()
+        SimpleTerm(acro, acro, info["title"])
+        for acro, info in organisations.items()
     ]
     terms.sort(key=lambda t: t.title)
     vocab = SimpleVocabulary(terms)

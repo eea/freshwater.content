@@ -47,7 +47,8 @@ class Breadcrumbs:
             items.append(item)
 
         result["breadcrumbs"]["items"] = items
-        result["breadcrumbs"]["root"] = portal_state.navigation_root().absolute_url()
+        result["breadcrumbs"]["root"] = portal_state.navigation_root() \
+            .absolute_url()
         return result
 
 
