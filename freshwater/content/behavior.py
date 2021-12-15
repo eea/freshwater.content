@@ -1,3 +1,5 @@
+""" behavior.py """
+
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 

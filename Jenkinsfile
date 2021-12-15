@@ -3,7 +3,7 @@ pipeline {
 
   environment {
         GIT_NAME = "freshwater.content"
-        SONARQUBE_TAGS = "www.eea.europa.eu"
+        SONARQUBE_TAGS = "water.europa.eu-freshwater"
     }
 
   stages {
@@ -107,23 +107,24 @@ pipeline {
           //   }
           // },
 
-          "Plone4": {
-            node(label: 'docker') {
-              sh '''docker run -i --rm --name="$BUILD_TAG-plone4" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:4 -v -vv -s $GIT_NAME'''
-            }
-          },
+          // "Plone4": {
+          //   node(label: 'docker') {
+          //     sh '''docker run -i --rm --name="$BUILD_TAG-plone4" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:4 -v -vv -s $GIT_NAME'''
+          //   }
+          // },
 
-          "Plone5": {
+          "Plone5 & Python3": {
             node(label: 'docker') {
-              sh '''docker run -i --rm --name="$BUILD_TAG-plone5" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:5 -v -vv -s $GIT_NAME'''
-            }
-          },
-
-          "Python3": {
-            node(label: 'docker') {
+              // sh '''docker run -i --rm --name="$BUILD_TAG-plone5" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:5 -v -vv -s $GIT_NAME'''
               sh '''docker run -i --rm --name="$BUILD_TAG-python3" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:5-python3 -v -vv -s $GIT_NAME'''
             }
-          }
+          },
+
+          // "Python3": {
+          //   node(label: 'docker') {
+          //     sh '''docker run -i --rm --name="$BUILD_TAG-python3" -e GIT_BRANCH="$BRANCH_NAME" -e ADDONS="$GIT_NAME" -e DEVELOP="src/$GIT_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/plone-test:5-python3 -v -vv -s $GIT_NAME'''
+          //   }
+          // }
         )
       }
     }
@@ -131,7 +132,7 @@ pipeline {
     stage('Report to SonarQube') {
       when {
         allOf {
-          environment name: 'CHANGE_ID', value: ''
+          environment name: 'SONARQUBE_TAG', value: ''
         }
       }
       steps {
@@ -150,7 +151,7 @@ pipeline {
             withSonarQubeEnv('Sonarqube') {
                 // sh '''sed -i "s|/plone/instance/src/$GIT_NAME|$(pwd)|g" coverage.xml'''
                 // sh '''find xunit-functional -type f -exec mv {} xunit-reports/ ";"'''
-                sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.python.xunit.skipDetails=true -Dsonar.python.xunit.reportPath=xunit-reports/*.xml -Dsonar.python.coverage.reportPath=coverage.xml -Dsonar.sources=./eea -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
+                sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.python.xunit.skipDetails=true -Dsonar.python.xunit.reportPath=xunit-reports/*.xml -Dsonar.python.coverage.reportPath=coverage.xml -Dsonar.sources=./freshwater -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
                 sh '''try=2; while [ \$try -gt 0 ]; do curl -s -XPOST -u "${SONAR_AUTH_TOKEN}:" "${SONAR_HOST_URL}api/project_tags/set?project=${GIT_NAME}-${BRANCH_NAME}&tags=${SONARQUBE_TAGS},${BRANCH_NAME}" > set_tags_result; if [ \$(grep -ic error set_tags_result ) -eq 0 ]; then try=0; else cat set_tags_result; echo "... Will retry"; sleep 60; try=\$(( \$try - 1 )); fi; done'''
             }
           }

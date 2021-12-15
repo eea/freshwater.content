@@ -1,3 +1,5 @@
+""" vocabulary.py """
+
 from plone.app.vocabularies.catalog import KeywordsVocabulary as BKV
 from zope.interface import implementer, provider  # alsoProvides,
 from zope.schema.interfaces import IVocabularyFactory
@@ -31,10 +33,12 @@ layers = [lr.strip() for lr in layers if lr.strip()]
 
 @provider(IVocabularyFactory)
 def layers_vocabulary(context):
+    """ layers_vocabulary """
     return values_to_vocab(layers)
 
 
 def list_values_to_vocab(values):
+    """ list_values_to_vocab """
     terms = [SimpleTerm(key, value, title) for (key, value, title) in values]
     terms.sort(key=lambda t: t.title)
     vocab = SimpleVocabulary(terms)
@@ -43,6 +47,7 @@ def list_values_to_vocab(values):
 
 
 def values_to_vocab(values):
+    """ values_to_vocab """
     terms = [SimpleTerm(x, x, x) for x in values]
     terms.sort(key=lambda t: t.title)
     vocab = SimpleVocabulary(terms)
@@ -50,7 +55,7 @@ def values_to_vocab(values):
     return vocab
 
 
-# TODO where is this list used? There are 27 EU Member states, maybe make
+# where is this list used? There are 27 EU Member states, maybe make
 # a complete list with all the member states and add into 'countries_extra'
 # non EU countries?
 countries = """
@@ -84,8 +89,10 @@ UK	UK	United Kingdom
 countries = [line.strip() for line in countries if line.strip()]
 countries = [line.split("\t") for line in countries]
 
+
 @provider(IVocabularyFactory)
 def countries_vocabulary(context):
+    """countries_vocabulary"""
     vocab = list_values_to_vocab(countries)
     return vocab
 
@@ -106,8 +113,10 @@ countries_extra = [line.split("\t") for line in countries_extra]
 countries_extra = countries + countries_extra
 countries_extra = sorted(countries_extra, key=lambda i: i[2])
 
+
 @provider(IVocabularyFactory)
 def countries_complete_vocabulary(context):
+    """countries_complete_vocabulary"""
     vocab = list_values_to_vocab(countries_extra)
     return vocab
 
@@ -123,6 +132,7 @@ types = [
 
 @provider(IVocabularyFactory)
 def types_vocabulary(context):
+    """types_vocabulary"""
     return values_to_vocab(types)
 
 
@@ -137,6 +147,7 @@ dpsir = [
 
 @provider(IVocabularyFactory)
 def dpsir_vocabulary(context):
+    """dpsir_vocabulary"""
     return values_to_vocab(dpsir)
 
 
@@ -149,6 +160,7 @@ report_type = [
 
 @provider(IVocabularyFactory)
 def report_vocabulary(context):
+    """report_vocabulary"""
     return values_to_vocab(report_type)
 
 
@@ -167,6 +179,7 @@ legislative_reference = [
 
 @provider(IVocabularyFactory)
 def legislative_vocabulary(context):
+    """legislative_vocabulary"""
     return values_to_vocab(legislative_reference)
 
 
@@ -185,6 +198,7 @@ def legislative_vocabulary(context):
 
 @implementer(IVocabularyFactory)
 class KeywordsVocabulary(BKV):
+    """KeywordsVocabulary"""
     def __init__(self, index):
         self.keyword_index = index
 
@@ -216,6 +230,7 @@ themes = [
 
 @provider(IVocabularyFactory)
 def themes_vocabulary(context):
+    """themes_vocabulary"""
     return values_to_vocab(themes)
 
 
@@ -269,12 +284,14 @@ subthemes = [
 
 @provider(IVocabularyFactory)
 def subthemes_vocabulary(context):
+    """subthemes_vocabulary"""
     return values_to_vocab(subthemes)
 
 
 organisations = {
     "EEA": dict(
-        title="European Environment Agency", website="https://www.eea.europa.eu/"
+        title="European Environment Agency",
+        website="https://www.eea.europa.eu/"
     ),
     "DG ENV": dict(
         title="Environment Directorate General of the European Commission ",
@@ -307,8 +324,10 @@ organisations = {
 
 @provider(IVocabularyFactory)
 def organisations_vocabulary(context):
+    """organisations_vocabulary"""
     terms = [
-        SimpleTerm(acro, acro, info["title"]) for acro, info in organisations.items()
+        SimpleTerm(acro, acro, info["title"])
+        for acro, info in organisations.items()
     ]
     terms.sort(key=lambda t: t.title)
     vocab = SimpleVocabulary(terms)

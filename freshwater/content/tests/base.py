@@ -1,12 +1,12 @@
 """ Base test cases
 """
 from Products.CMFPlone import setuphandlers
-from plone.testing import z2
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import setRoles
+from plone.testing.zope import installProduct, uninstallProduct
 
 
 class EEAFixture(PloneSandboxLayer):
@@ -15,9 +15,11 @@ class EEAFixture(PloneSandboxLayer):
     def setUpZope(self, app, configurationContext):
         """ Setup Zope
         """
+        import plone.restapi
         import freshwater.content
+        self.loadZCML(package=plone.restapi)
         self.loadZCML(package=freshwater.content)
-        z2.installProduct(app, 'freshwater.content')
+        installProduct(app, 'freshwater.content')
 
     def setUpPloneSite(self, portal):
         """ Setup Plone
@@ -45,7 +47,7 @@ class EEAFixture(PloneSandboxLayer):
     def tearDownZope(self, app):
         """ Uninstall Zope
         """
-        z2.uninstallProduct(app, 'freshwater.content')
+        uninstallProduct(app, 'freshwater.content')
 
 EEAFIXTURE = EEAFixture()
 FUNCTIONAL_TESTING = FunctionalTesting(bases=(EEAFIXTURE,),
