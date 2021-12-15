@@ -3,7 +3,7 @@ pipeline {
 
   environment {
         GIT_NAME = "freshwater.content"
-        SONARQUBE_TAGS = ""
+        SONARQUBE_TAGS = "water.europa.eu/freshwater"
     }
 
   stages {
