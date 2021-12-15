@@ -93,7 +93,7 @@ class ICatalogueMetadata(model.Schema):
     category = Tuple(
         title=u"Topics",
         required=False,
-        missing_value=(),
+        default=(),
         value_type=TextLine(
             title=u"Single topic",
         ))
