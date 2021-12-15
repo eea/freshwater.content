@@ -26,7 +26,7 @@ class Breadcrumbs(object):
     def __call__(self, expand=False):
         result = {"breadcrumbs": {
             "@id": "{}".format(self.context.absolute_url())}}
-            # "@id": f"{self.context.absolute_url()}/@breadcrumbs"}}
+        # "@id": f"{self.context.absolute_url()}/@breadcrumbs"}}
         if not expand:
             return result
 
