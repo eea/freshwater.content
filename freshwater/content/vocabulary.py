@@ -101,6 +101,7 @@ countries_extra = """
 AT	AT	Austria
 CZ	CZ	Czechia
 CH	CH	Switzerland
+EU	EU	European Union
 HU	HU	Hungary
 IS	IS	Iceland
 LU	LU	Luxembourg
