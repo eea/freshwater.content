@@ -51,7 +51,7 @@
     <value key="operations">
       <element>plone.app.querystring.operation.selection.any</element>
     </value>
-    <value key="group" i18n:translate="">Freshwater</value>
+    <value key="group" i18n:translate="">DataConnector Parameter</value>
     <value key="vocabulary">wise_countries_complete_vocabulary</value>
   </records>
 
