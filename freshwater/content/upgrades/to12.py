@@ -1,6 +1,5 @@
 ''' Upgrade to 12 '''
 
-import json
 import logging
 from plone import api
 from freshwater.content.blocks import BlocksTraverser
@@ -68,8 +67,8 @@ def run_upgrade(setup_context):
     for brain in brains:
         obj = brain.getObject()
 
-        if hasattr(obj.aq_inner.aq_self, 'blocks') \
-            and hasattr(obj.aq_inner.aq_self, 'blocks_layout'):
+        if hasattr(obj.aq_inner.aq_self, 'blocks') and \
+                hasattr(obj.aq_inner.aq_self, 'blocks_layout'):
             traverser = BlocksTraverser(obj)
 
             plotlychart_fixer = PlotlyChartTransformer(obj)

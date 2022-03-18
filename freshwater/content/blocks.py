@@ -30,8 +30,7 @@ def get_blocks(obj):
     out = []
     for _id in order:
         if _id not in blocks:
-            obj.blocks_layout['items'] = [b for b in order if b
-                    in blocks]
+            obj.blocks_layout['items'] = [b for b in order if b in blocks]
             obj._p_changed = True
             logger.info('Object with incomplete blocks %s',
                         obj.absolute_url())
@@ -60,9 +59,9 @@ class BlocksTraverser(object):
     def handle_subblocks(self, block_value, visitor):
         """ handle_subblocks """
 
-        if 'data' in block_value and isinstance(block_value['data'],
-                dict) and 'blocks' in block_value['data']:
-            for block in block_value['data']['blocks'].values():
+        if "data" in block_value and isinstance(block_value["data"], dict) \
+                and "blocks" in block_value["data"]:
+            for block in block_value["data"]["blocks"].values():
                 if visitor(block):
                     self.context._p_changed = True
 
