@@ -24,5 +24,14 @@
     handler=".to11.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Migrate plotly charts"
+    description=""
+    profile="freshwater.content:default"
+    source="*"
+    destination="12"
+    handler=".to12.run_upgrade"
+    />
+
 
 </configure>
