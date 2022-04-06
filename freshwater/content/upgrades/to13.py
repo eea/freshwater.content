@@ -6,6 +6,7 @@ from freshwater.content.blocks import BlocksTraverser
 
 logger = logging.getLogger('eea.restapi.migration')
 
+
 class ImageCardTransformer(object):
 
     """Migrator for image cards."""
