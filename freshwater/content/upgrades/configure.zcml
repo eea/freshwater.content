@@ -33,5 +33,14 @@
     handler=".to12.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Migrate image cards"
+    description=""
+    profile="freshwater.content:default"
+    source="*"
+    destination="13"
+    handler=".to13.run_upgrade"
+    />
+
 
 </configure>
