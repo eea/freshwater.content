@@ -10,6 +10,7 @@ from freshwater.content.blocks import BlocksTraverser
 
 logger = logging.getLogger('freshwater.content.migration')
 
+TYPES = ['slate', 'conditionalDataBlock']
 
 def clean_url(url):
     """clean_url"""
@@ -23,6 +24,8 @@ def clean_url(url):
         'https://demo-freshwater.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu/api',
+        'https://water.europa.eu',
+        'https://water.europa.eu/api'
     ]
     for bit in hosts:
         url = url.replace(bit, '')
@@ -116,7 +119,7 @@ class SlateBlockTransformer(object):
         data = child.get("data", {})
         if data.get("link", {}).get("external", {}).get("external_link"):
             link = data["link"]["external"]["external_link"]
-            if "demo-freshwater" in link:
+            if "demo-freshwater" in link or 'water.europa' in link:
                 old = data['link']['external']['external_link']
                 data['link']['external']['external_link'] = path2uid(
                     self.context,
@@ -130,7 +133,7 @@ class SlateBlockTransformer(object):
 
         if child.get('url'):
             link = child['url']
-            if 'demo-freshwater' in link:
+            if 'demo-freshwater' in link or 'water.europa' in link:
                 child['url'] = path2uid(self.context, clean_url(link))
                 logger.info(
                     "fixed type:'internal_link' in %s (%s) => (%s)",
@@ -141,7 +144,7 @@ class SlateBlockTransformer(object):
         return dirty
 
     def __call__(self, block):
-        if (block or {}).get('@type') != 'slate':
+        if (block or {}).get('@type') not in TYPES:
             return None
         if 'value' not in block:        # avoid empty blocks
             return None
