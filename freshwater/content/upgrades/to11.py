@@ -211,6 +211,9 @@ def run_upgrade(setup_context):
 
             dumped = json.dumps(obj.blocks)
 
+            if 'water.europa' in dumped:
+                import pdb
+                pdb.set_trace()
             if 'backend' in dumped:
                 import pdb
                 pdb.set_trace()
