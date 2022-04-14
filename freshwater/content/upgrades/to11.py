@@ -144,10 +144,10 @@ class SlateBlockTransformer(object):
         if child.get('provider_url'):
             link = child['provider_url']
             if 'demo-freshwater' in link or 'water.europa' in link:
-                child['url'] = path2uid(self.context, clean_url(link))
+                child['provider_url'] = path2uid(self.context, clean_url(link))
                 logger.info(
                     "fixed type:'internal_link' in %s (%s) => (%s)",
-                    self.context.absolute_url(), link, child['url']
+                    self.context.absolute_url(), link, child['provider_url']
                 )
                 dirty = True
 
