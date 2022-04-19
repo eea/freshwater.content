@@ -24,8 +24,8 @@ def clean_url(url):
         'https://demo-freshwater.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu/api',
-        'https://water.europa.eu',
         'https://water.europa.eu/api'
+        'https://water.europa.eu',
     ]
     for bit in hosts:
         url = url.replace(bit, '')
@@ -141,20 +141,8 @@ class SlateBlockTransformer(object):
                 )
                 dirty = True
 
-        if child.get('provider_url'):
-            link = child['provider_url']
-            if 'demo-freshwater' in link or 'water.europa' in link:
-                child['provider_url'] = path2uid(self.context, clean_url(link))
-                logger.info(
-                    "fixed type:'internal_link' in %s (%s) => (%s)",
-                    self.context.absolute_url(), link, child['provider_url']
-                )
-                dirty = True
-
-        return dirty
-
     def __call__(self, block):
-        if (block or {}).get('@type') not in TYPES:
+        if (block or {}).get('@type') != 'slate':
             return None
         if 'value' not in block:        # avoid empty blocks
             return None
@@ -170,6 +158,33 @@ class SlateBlockTransformer(object):
                     status.append(handler(child))
 
         return any(status)
+
+
+class ConditionalDataBlockTransformer(object):
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self, block):
+        if (block or {}).get('@type') != 'conditionalDataBlock':
+            return None
+        
+        dirty = False
+
+        provider_url = block['provider_url']
+
+        if 'water.europa' in provider_url:
+            block['provider_url'] = path2uid(
+                self.context, clean_url(provider_url))
+
+            logger.info(
+                "fixed type:'internal_link' in %s (%s) => (%s)",
+                self.context.absolute_url(), provider_url, 
+                provider_url['provider_url']
+            )
+            
+            dirty = True
+    
+        return dirty
 
 
 class ContainerBlockFixer(object):
@@ -215,6 +230,9 @@ def run_upgrade(setup_context):
 
             slate_fixer = SlateBlockTransformer(obj)
             traverser(slate_fixer)
+
+            conditional_fixer = ConditionalDataBlockTransformer(obj)
+            traverser(conditional_fixer)
 
             imagecards_fixer = ContainerBlockFixer(obj)
             traverser(imagecards_fixer)
