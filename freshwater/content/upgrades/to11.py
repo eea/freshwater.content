@@ -244,9 +244,9 @@ def run_upgrade(setup_context):
 
             dumped = json.dumps(obj.blocks)
 
-            if 'water.europa.eu/freshwater/countries/uwwt' in dumped:
-                import pdb
-                pdb.set_trace()
+            # if 'water.europa.eu/freshwater/countries/uwwt' in dumped:
+            #     import pdb
+            #     pdb.set_trace()
             if 'backend' in dumped:
                 import pdb
                 pdb.set_trace()
@@ -257,7 +257,6 @@ def run_upgrade(setup_context):
                 import pdb
                 pdb.set_trace()
 
-            assert 'water.europa.eu/freshwater/countries/uwwt' not in dumped
             assert 'backend' not in dumped
             assert 'localhost' not in dumped
             assert 'demo-freshwater' not in dumped
