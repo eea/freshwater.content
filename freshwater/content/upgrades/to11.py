@@ -10,7 +10,7 @@ from freshwater.content.blocks import BlocksTraverser
 
 logger = logging.getLogger('freshwater.content.migration')
 
-TYPES = ['slate', 'conditionalDataBlock']
+TYPES = ['countryHeaderDataBlock', 'conditionalDataBlock', 'plotly_chart']
 
 
 def clean_url(url):
@@ -25,7 +25,7 @@ def clean_url(url):
         'https://demo-freshwater.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu/api',
-        'https://water.europa.eu/api'
+        'https://water.europa.eu/api',
         'https://water.europa.eu',
     ]
     for bit in hosts:
@@ -170,7 +170,7 @@ class ConditionalDataBlockTransformer(object):
         self.context = context
 
     def __call__(self, block):
-        if (block or {}).get('@type') != 'conditionalDataBlock':
+        if (block or {}).get('@type') not in TYPES:
             return None
 
         dirty = False
@@ -178,8 +178,8 @@ class ConditionalDataBlockTransformer(object):
         provider_url = block['provider_url']
 
         if 'water.europa' in provider_url:
-            block['provider_url'] = path2uid(
-                self.context, clean_url(provider_url))
+            _clean_url = clean_url(provider_url)
+            block['provider_url'] = path2uid(self.context, _clean_url)
 
             logger.info(
                 "fixed type:'internal_link' in %s (%s) => (%s)",
@@ -244,7 +244,7 @@ def run_upgrade(setup_context):
 
             dumped = json.dumps(obj.blocks)
 
-            if 'water.europa' in dumped:
+            if 'water.europa.eu/freshwater/countries/uwwt' in dumped:
                 import pdb
                 pdb.set_trace()
             if 'backend' in dumped:
@@ -257,6 +257,7 @@ def run_upgrade(setup_context):
                 import pdb
                 pdb.set_trace()
 
+            assert 'water.europa.eu/freshwater/countries/uwwt' not in dumped
             assert 'backend' not in dumped
             assert 'localhost' not in dumped
             assert 'demo-freshwater' not in dumped
