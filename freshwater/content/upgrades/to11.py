@@ -184,7 +184,7 @@ class ConditionalDataBlockTransformer(object):
             logger.info(
                 "fixed type:'internal_link' in %s (%s) => (%s)",
                 self.context.absolute_url(), provider_url,
-                provider_url['provider_url']
+                block['provider_url']
             )
 
             dirty = True
