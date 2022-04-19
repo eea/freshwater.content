@@ -12,6 +12,7 @@ logger = logging.getLogger('freshwater.content.migration')
 
 TYPES = ['slate', 'conditionalDataBlock']
 
+
 def clean_url(url):
     """clean_url"""
     if not url:
@@ -141,6 +142,8 @@ class SlateBlockTransformer(object):
                 )
                 dirty = True
 
+        return dirty
+
     def __call__(self, block):
         if (block or {}).get('@type') != 'slate':
             return None
@@ -161,13 +164,15 @@ class SlateBlockTransformer(object):
 
 
 class ConditionalDataBlockTransformer(object):
+    """ ConditionalDataBlockTransformer """
+
     def __init__(self, context):
         self.context = context
 
     def __call__(self, block):
         if (block or {}).get('@type') != 'conditionalDataBlock':
             return None
-        
+
         dirty = False
 
         provider_url = block['provider_url']
@@ -178,12 +183,12 @@ class ConditionalDataBlockTransformer(object):
 
             logger.info(
                 "fixed type:'internal_link' in %s (%s) => (%s)",
-                self.context.absolute_url(), provider_url, 
+                self.context.absolute_url(), provider_url,
                 provider_url['provider_url']
             )
-            
+
             dirty = True
-    
+
         return dirty
 
 
