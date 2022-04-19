@@ -10,6 +10,8 @@ from freshwater.content.blocks import BlocksTraverser
 
 logger = logging.getLogger('freshwater.content.migration')
 
+TYPES = ['countryHeaderDataBlock', 'conditionalDataBlock', 'plotly_chart']
+
 
 def clean_url(url):
     """clean_url"""
@@ -23,6 +25,8 @@ def clean_url(url):
         'https://demo-freshwater.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu',
         'https://demo-freshwater.devel4cph.eea.europa.eu/api',
+        'https://water.europa.eu/api',
+        'https://water.europa.eu',
     ]
     for bit in hosts:
         url = url.replace(bit, '')
@@ -116,7 +120,7 @@ class SlateBlockTransformer(object):
         data = child.get("data", {})
         if data.get("link", {}).get("external", {}).get("external_link"):
             link = data["link"]["external"]["external_link"]
-            if "demo-freshwater" in link:
+            if "demo-freshwater" in link or 'water.europa' in link:
                 old = data['link']['external']['external_link']
                 data['link']['external']['external_link'] = path2uid(
                     self.context,
@@ -130,7 +134,7 @@ class SlateBlockTransformer(object):
 
         if child.get('url'):
             link = child['url']
-            if 'demo-freshwater' in link:
+            if 'demo-freshwater' in link or 'water.europa' in link:
                 child['url'] = path2uid(self.context, clean_url(link))
                 logger.info(
                     "fixed type:'internal_link' in %s (%s) => (%s)",
@@ -157,6 +161,35 @@ class SlateBlockTransformer(object):
                     status.append(handler(child))
 
         return any(status)
+
+
+class ConditionalDataBlockTransformer(object):
+    """ ConditionalDataBlockTransformer """
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self, block):
+        if (block or {}).get('@type') not in TYPES:
+            return None
+
+        dirty = False
+
+        provider_url = block['provider_url']
+
+        if 'water.europa' in provider_url:
+            _clean_url = clean_url(provider_url)
+            block['provider_url'] = path2uid(self.context, _clean_url)
+
+            logger.info(
+                "fixed type:'internal_link' in %s (%s) => (%s)",
+                self.context.absolute_url(), provider_url,
+                block['provider_url']
+            )
+
+            dirty = True
+
+        return dirty
 
 
 class ContainerBlockFixer(object):
@@ -203,11 +236,17 @@ def run_upgrade(setup_context):
             slate_fixer = SlateBlockTransformer(obj)
             traverser(slate_fixer)
 
+            conditional_fixer = ConditionalDataBlockTransformer(obj)
+            traverser(conditional_fixer)
+
             imagecards_fixer = ContainerBlockFixer(obj)
             traverser(imagecards_fixer)
 
             dumped = json.dumps(obj.blocks)
 
+            # if 'water.europa.eu/freshwater/countries/uwwt' in dumped:
+            #     import pdb
+            #     pdb.set_trace()
             if 'backend' in dumped:
                 import pdb
                 pdb.set_trace()
