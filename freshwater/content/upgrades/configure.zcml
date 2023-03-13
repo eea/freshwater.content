@@ -42,5 +42,14 @@
     handler=".to13.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Set root language"
+    description=""
+    profile="freshwater.content:default"
+    source="*"
+    destination="14"
+    handler=".to14.run_upgrade"
+    />
+
 
 </configure>
