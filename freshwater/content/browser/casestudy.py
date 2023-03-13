@@ -1,3 +1,4 @@
+""" case studies module """
 
 import logging
 import time
@@ -14,6 +15,8 @@ logger = logging.getLogger('freshwater.content')
 
 
 def t2r(text):
+    """ transform string to richtext """
+
     text = str(text) or ''
 
     if not text:
@@ -23,6 +26,8 @@ def t2r(text):
 
 
 class ToPDB(BrowserView):
+    """ global view to enter in pdb """
+
     def __call__(self):
         import pdb
         pdb.set_trace()
@@ -35,6 +40,8 @@ class SetupCaseStudies(BrowserView):
     nwrm_base_url = "http://nwrm.eu"
 
     def get_section_by_id(self, soup, id_section):
+        """ return section """
+
         section = soup.find(id=id_section)
 
         if not section:
