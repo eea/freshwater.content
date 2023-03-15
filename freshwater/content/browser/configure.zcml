@@ -12,8 +12,15 @@
 
   <browser:page
     for="*"
+    name="setup-measures-catalogue"
+    class=".measures.SetupMeasuresCatalogue"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:page
+    for="*"
     name="topdb"
-    class=".casestudy.ToPDB"
+    class=".utils.ToPDB"
     permission="cmf.ManagePortal"
     />
 

@@ -6,31 +6,13 @@ import requests
 from bs4 import BeautifulSoup
 
 from Products.Five.browser import BrowserView
-from plone.app.textfield.value import RichTextValue
 from plone.dexterity.utils import createContentInContainer as create_content
 from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
 
+from .utils import t2r
+
 logger = logging.getLogger('freshwater.content')
-
-
-def t2r(text):
-    """ transform string to richtext """
-
-    text = str(text) or ''
-
-    if not text:
-        return ''
-
-    return RichTextValue(text or '', 'text/html', 'text/html')
-
-
-class ToPDB(BrowserView):
-    """ global view to enter in pdb """
-
-    def __call__(self):
-        import pdb
-        pdb.set_trace()
 
 
 class SetupCaseStudies(BrowserView):
