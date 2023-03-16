@@ -136,8 +136,7 @@ class SetupMeasuresCatalogue(BrowserView):
                                 'p')[0].text
                             img_description = second_row[img_index].findAll(
                                 'p')[1].text
-                        except Exception as ee:
-                            print(ee)
+                        except Exception:
                             img_title = second_row[-1].findAll('p')[0].text
                             img_description = second_row[-1].findAll(
                                 'p')[1].text
@@ -174,8 +173,7 @@ class SetupMeasuresCatalogue(BrowserView):
                             item, case_study_obj, 'case_studies')
 
                 item.reindexObject()
-            except Exception as e:
-                print(e)
+            except Exception:
                 import pdb
                 pdb.set_trace()
 

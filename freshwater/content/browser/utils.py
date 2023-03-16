@@ -1,9 +1,9 @@
 """ utils """
 
 from plone.app.textfield.value import RichTextValue
+from plone.protect.interfaces import IDisableCSRFProtection
 from Products.Five.browser import BrowserView
 
-from plone.protect.interfaces import IDisableCSRFProtection
 from zope.interface import alsoProvides
 
 
