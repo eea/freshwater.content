@@ -125,17 +125,19 @@ class SetupMeasuresCatalogue(BrowserView):
                     first_row = table_rows[0].findAll('td')
                     second_row = table_rows[1].findAll('td')
 
-                    for index in range(len(first_row)):
-                        img_src = first_row[index].find('img').attrs['src']
+                    for img_index, _ in enumerate(first_row):
+                        img_src = first_row[img_index].find('img').attrs['src']
                         img_content = requests.get(img_src).content
                         img_filename = img_src.split('/')[-1]
                         # sometimes in the second row we have lesser columns
                         # because of colspan
                         try:
-                            img_title = second_row[index].findAll('p')[0].text
-                            img_description = second_row[index].findAll(
+                            img_title = second_row[img_index].findAll(
+                                'p')[0].text
+                            img_description = second_row[img_index].findAll(
                                 'p')[1].text
-                        except:
+                        except Exception as ee:
+                            print(ee)
                             img_title = second_row[-1].findAll('p')[0].text
                             img_description = second_row[-1].findAll(
                                 'p')[1].text
@@ -173,6 +175,7 @@ class SetupMeasuresCatalogue(BrowserView):
 
                 item.reindexObject()
             except Exception as e:
+                print(e)
                 import pdb
                 pdb.set_trace()
 
