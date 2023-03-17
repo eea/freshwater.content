@@ -174,8 +174,7 @@ class SetupMeasuresCatalogue(BrowserView):
 
                 item.reindexObject()
             except Exception:
-                import pdb
-                pdb.set_trace()
+                continue
 
         alsoProvides(self.request, IDisableCSRFProtection)
 
