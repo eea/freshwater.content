@@ -3,13 +3,16 @@
 import logging
 import time
 import requests
+import traceback
 from bs4 import BeautifulSoup
 
 from Products.Five.browser import BrowserView
 from plone import api
 from plone.dexterity.utils import createContentInContainer as create_content
+from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.namedfile.file import NamedBlobImage, NamedBlobFile
+from zope.component import queryUtility
 from zope.interface import alsoProvides
 from collective.relationhelpers import api as relapi
 from .utils import t2r
@@ -32,11 +35,10 @@ def get_section_by_id(soup, id_section):
     return res
 
 
-def get_content_by_title(content_type, title):
-    """ get related content type """
+def get_object_by_id(content_type, obj_id):
+    """ get related object type """
     portal_catalog = api.portal.get_tool("portal_catalog")
-    results = portal_catalog.searchResults(
-        portal_type=content_type, Title=title)
+    results = portal_catalog.searchResults(portal_type=content_type, id=obj_id)
 
     result = [x.getObject() for x in results]
 
@@ -48,15 +50,16 @@ def get_content_by_title(content_type, title):
 
 def create_source(url_source, sources_folder):
     time.sleep(0.2)
-
-    logger.info("Creating source %s ", url_source)
+    url_normalizer = queryUtility(IURLNormalizer)
 
     page_source = requests.get(url_source)
     soup_source = BeautifulSoup(
         page_source.content, "html.parser")
 
     title = soup_source.find(class_="field--name-title").text
-    item = create_content(sources_folder, "source", title=title)
+    id_source = url_normalizer.normalize(url_source.split("/")[-1])
+    item = create_content(sources_folder, "source", title=title, id=id_source)
+    logger.info("Created source %s ", item.absolute_url())
 
     source_data = soup_source.find(class_="node__content")
     case_studies_orig = soup_source.find(
@@ -67,8 +70,9 @@ def create_source(url_source, sources_folder):
         case_studies = case_studies_orig.findAll(class_="field__item")
 
         for case_study in case_studies:
-            cs_title = case_study.find("a").text
-            case_study_obj = get_content_by_title("case_study", cs_title)
+            # cs_title = case_study.find("a").text
+            cs_id = case_study.find("a").attrs['href'].split("/")[-1]
+            case_study_obj = get_object_by_id("case_study", cs_id)
 
             if not case_study_obj:
                 continue
@@ -76,7 +80,8 @@ def create_source(url_source, sources_folder):
             relapi.link_objects(
                 item, case_study_obj, 'source_case_studies')
 
-    case_studies_orig.decompose()
+        case_studies_orig.decompose()
+
     item.source_data = t2r(source_data)
 
     # item.reindexObject()
@@ -85,98 +90,104 @@ def create_source(url_source, sources_folder):
 
 
 def create_case_study(url_case_study, parent, sources_folder):
-    time.sleep(0.2)
-    logger.info("Creating case study %s ", url_case_study)
+    try:
+        time.sleep(0.2)
+        url_normalizer = queryUtility(IURLNormalizer)
 
-    page_case_study = requests.get(url_case_study)
-    soup_case_study = BeautifulSoup(
-        page_case_study.content, "html.parser")
+        page_case_study = requests.get(url_case_study)
+        soup_case_study = BeautifulSoup(
+            page_case_study.content, "html.parser")
 
-    title = soup_case_study.find(class_="field--name-title").text
-    item = create_content(parent, "case_study", title=title)
+        title = soup_case_study.find(class_="field--name-title").text
+        id_case_study = url_normalizer.normalize(url_case_study.split("/")[-1])
+        item = create_content(parent, "case_study",
+                              title=title, id=id_case_study)
+        logger.info("Created case study %s ", item.absolute_url())
 
-    general = get_section_by_id(
-        soup_case_study, 'edit-group-general')
-    site_info = get_section_by_id(
-        soup_case_study, 'edit-group-site-information')
-    monitoring_maintenance = get_section_by_id(
-        soup_case_study, 'edit-group-monitoring-maintenance')
-    performance = get_section_by_id(
-        soup_case_study, 'edit-group-performance')
-    design_implementations = get_section_by_id(
-        soup_case_study, 'edit-group-design-implementations')
-    lessons_risks = get_section_by_id(
-        soup_case_study, 'edit-group-lessons-risks-implications')
-    policy_general_gov = get_section_by_id(
-        soup_case_study, 'edit-group-policy-general-governance-')
-    socio_economic = get_section_by_id(
-        soup_case_study, 'edit-group-socio-economic')
-    biophysical_impacts = get_section_by_id(
-        soup_case_study, 'edit-group-biophysical-impacts')
+        general = get_section_by_id(
+            soup_case_study, 'edit-group-general')
+        site_info = get_section_by_id(
+            soup_case_study, 'edit-group-site-information')
+        monitoring_maintenance = get_section_by_id(
+            soup_case_study, 'edit-group-monitoring-maintenance')
+        performance = get_section_by_id(
+            soup_case_study, 'edit-group-performance')
+        design_implementations = get_section_by_id(
+            soup_case_study, 'edit-group-design-implementations')
+        lessons_risks = get_section_by_id(
+            soup_case_study, 'edit-group-lessons-risks-implications')
+        policy_general_gov = get_section_by_id(
+            soup_case_study, 'edit-group-policy-general-governance-')
+        socio_economic = get_section_by_id(
+            soup_case_study, 'edit-group-socio-economic')
+        biophysical_impacts = get_section_by_id(
+            soup_case_study, 'edit-group-biophysical-impacts')
 
-    # get in-depth description and save the file
-    file_soup = general.find(class_="field--name-field-nwrm-cs-file")
-    filename = file_soup.find('a').text
-    file_url = NWRM_BASE_URL + file_soup.find('a').attrs['href']
-    file_content = requests.get(file_url).content
-    file_soup.decompose()
+        # get in-depth description and save the file
+        file_soup = general.find(class_="field--name-field-nwrm-cs-file")
+        
+        if file_soup:
+            filename = file_soup.find('a').text
+            file_url = NWRM_BASE_URL + file_soup.find('a').attrs['href']
+            file_content = requests.get(file_url).content
+            file_soup.decompose()
 
-    file_desc = create_content(
-        item, "File", title=filename)
-    file_desc.file = NamedBlobFile(
-        data=file_content, filename=filename)
+            file_desc = create_content(
+                item, "File", title=filename)
+            file_desc.file = NamedBlobFile(
+                data=file_content, filename=filename)
 
-    # create source(s) relation
-    sources_orig = general.find(
-        class_="field--name-field-nwrm-cs-sources")
-    if sources_orig:
-        sources = sources_orig.findAll(class_="field__item")
+        # create source(s) relation
+        sources_orig = general.find(
+            class_="field--name-field-nwrm-cs-sources")
+        if sources_orig:
+            sources = sources_orig.findAll(class_="field__item")
 
-        for source in sources:
-            source_title = source.find("a").text
-            source_obj = get_content_by_title("source", source_title)
-            source_url = NWRM_BASE_URL + source.find("a").attrs['href']
+            for source in sources:
+                # source_title = source.find("a").text
+                source_id = source.find("a").attrs['href'].split("/")[-1]
+                source_obj = get_object_by_id("source", source_id)
+                source_url = NWRM_BASE_URL + source.find("a").attrs['href']
 
-            if not source_obj:
-                source_obj = create_source(source_url, sources_folder)
+                if not source_obj:
+                    source_obj = create_source(source_url, sources_folder)
 
-            try:
                 relapi.link_objects(
                     item, source_obj, 'sources')
-            except:
-                logger.info("Relation already exists!")
-                continue
 
-    sources_orig.decompose()
+            sources_orig.decompose()
 
-    # create measure relation
-    measures_orig = general.find(
-        class_="field--name-field-nwrm-cs-nwrms")
-    if measures_orig:
-        measures = measures_orig.findAll(class_="field__item")
+        # create measure relation
+        measures_orig = general.find(
+            class_="field--name-field-nwrm-cs-nwrms")
+        if measures_orig:
+            measures = measures_orig.findAll(class_="field__item")
 
-        for measure in measures:
-            measure_title = measure.find("a").text
-            measure_obj = get_content_by_title("measure", measure_title)
+            for measure in measures:
+                # measure_title = measure.find("a").text
+                measure_id = measure.find("a").attrs['href'].split("/")[-1]
+                measure_obj = get_object_by_id("measure", measure_id)
 
-            if not measure_obj:
-                continue
+                if not measure_obj:
+                    continue
 
-            relapi.link_objects(
-                item, measure_obj, 'measures')
+                relapi.link_objects(
+                    item, measure_obj, 'measures')
 
-    measures_orig.decompose()
+            measures_orig.decompose()
 
-    # set attributes
-    item.general = t2r(general)
-    item.site_information = t2r(site_info)
-    item.monitoring_maintenance = t2r(monitoring_maintenance)
-    item.performance = t2r(performance)
-    item.design_and_implementations = t2r(design_implementations)
-    item.lessons_risks_implications = t2r(lessons_risks)
-    item.policy_general_governance = t2r(policy_general_gov)
-    item.socio_economic = t2r(socio_economic)
-    item.biophysical_impacts = t2r(biophysical_impacts)
+        # set attributes
+        item.general = t2r(general)
+        item.site_information = t2r(site_info)
+        item.monitoring_maintenance = t2r(monitoring_maintenance)
+        item.performance = t2r(performance)
+        item.design_and_implementations = t2r(design_implementations)
+        item.lessons_risks_implications = t2r(lessons_risks)
+        item.policy_general_governance = t2r(policy_general_gov)
+        item.socio_economic = t2r(socio_economic)
+        item.biophysical_impacts = t2r(biophysical_impacts)
+    except:
+        print(traceback.format_exc())
 
     # item.reindexObject()
 
@@ -235,6 +246,7 @@ class SetupMeasuresCatalogue(BrowserView):
         return result[0]
 
     def __call__(self):
+        url_normalizer = queryUtility(IURLNormalizer)
         measures_url = "http://nwrm.eu/measures-catalogue"
         base_page = requests.get(measures_url)
         base_soup = BeautifulSoup(base_page.content, "html.parser")
@@ -294,7 +306,10 @@ class SetupMeasuresCatalogue(BrowserView):
                 if case_studies:
                     case_studies = case_studies.findAll(class_="field__item")
 
-                item = create_content(measure_folder, "measure", title=title)
+                id_measure = url_normalizer.normalize(
+                    url_measure.split("/")[-1])
+                item = create_content(
+                    measure_folder, "measure", title=title, id=id_measure)
 
                 # set object attribute other fields
                 item.measure_code = code
@@ -367,15 +382,19 @@ class SetupMeasuresCatalogue(BrowserView):
                 # set case studies relation
                 if case_studies:
                     for case_study in case_studies:
-                        cs_title = case_study.find("a").text
-                        case_study_obj = get_content_by_title(
-                            "case_study", cs_title)
+                        # cs_title = case_study.find("a").text
+                        cs_id = case_study.find(
+                            "a").attrs['href'].split("/")[-1]
+                        case_study_obj = get_object_by_id(
+                            "case_study", cs_id)
 
                         if not case_study_obj:
                             case_study_url = NWRM_BASE_URL + \
                                 case_study.find("a").attrs['href']
                             case_study_obj = create_case_study(
-                                case_study_url, case_study_folder, sources_folder)
+                                case_study_url, 
+                                case_study_folder, 
+                                sources_folder)
 
                         relapi.link_objects(
                             item, case_study_obj, 'case_studies')
@@ -383,9 +402,9 @@ class SetupMeasuresCatalogue(BrowserView):
                 # item.reindexObject()
 
             except Exception as e:
-                # print(e)
+                print(traceback.format_exc())
                 # import pdb; pdb.set_trace()
-                continue
+                # continue
 
         alsoProvides(self.request, IDisableCSRFProtection)
 

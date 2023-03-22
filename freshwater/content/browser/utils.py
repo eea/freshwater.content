@@ -10,10 +10,39 @@ from zope.interface import alsoProvides
 def t2r(text):
     """ transform string to richtext """
 
-    text = str(text) or ''
-
     if not text:
         return ''
+
+    # remove empty tables
+    if text.find('table'):
+        items = text.findAll(class_="field__item")
+
+        for item in items:
+            table = item.find('table')
+
+            if table and not table.find('tbody'):
+                table.decompose()
+                item.string = "No data"
+
+    # remove last column from tables
+    if text.find('table'):
+        tables = text.findAll("table")
+
+        for table in tables:
+            rows = table.findAll("tr")
+
+            for row in rows:
+                ths = row.findAll("th")
+
+                if ths:
+                    ths[-1].decompose()
+            
+                tds = row.findAll("td")
+
+                if tds:
+                    tds[-1].decompose()
+            
+    text = str(text) or ''
 
     return RichTextValue(text or '', 'text/html', 'text/html')
 
