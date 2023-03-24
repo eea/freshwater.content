@@ -36,12 +36,12 @@ def t2r(text, remove_last_column=False):
 
                 if ths:
                     ths[-1].decompose()
-            
+
                 tds = row.findAll("td")
 
                 if tds:
                     tds[-1].decompose()
-            
+
     text = str(text) or ''
 
     return RichTextValue(text or '', 'text/html', 'text/html')

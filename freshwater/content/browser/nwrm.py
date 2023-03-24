@@ -2,9 +2,9 @@
 
 import logging
 import time
-import requests
-import traceback
+# import traceback
 import transaction
+import requests
 from bs4 import BeautifulSoup
 
 from Products.Five.browser import BrowserView
@@ -50,6 +50,7 @@ def get_object_by_id(content_type, obj_id):
 
 
 def create_source(url_source, sources_folder):
+    """ create source object """
     time.sleep(0.5)
     url_normalizer = queryUtility(IURLNormalizer)
 
@@ -85,12 +86,11 @@ def create_source(url_source, sources_folder):
 
     item.source_data = t2r(source_data)
 
-    # item.reindexObject()
-
     return item
 
 
 def create_case_study(url_case_study, parent, sources_folder):
+    """ create case study object """
     try:
         time.sleep(0.5)
         url_normalizer = queryUtility(IURLNormalizer)
@@ -192,10 +192,9 @@ def create_case_study(url_case_study, parent, sources_folder):
         item.socio_economic = t2r(socio_economic, remove_last_column=True)
         item.biophysical_impacts = t2r(
             biophysical_impacts, remove_last_column=True)
-    except:
-        print(traceback.format_exc())
-
-    # item.reindexObject()
+    except Exception:
+        # print(traceback.format_exc())
+        pass
 
     return item
 
@@ -210,6 +209,8 @@ class SetupCaseStudies(BrowserView):
         base_page = requests.get(case_studies_url)
         base_soup = BeautifulSoup(base_page.content, "html.parser")
         case_studies = base_soup.find_all("td", class_="views-field-title")
+        sources_folder = create_content(
+            self.context, "Document", title='Sources')
 
         for index, case_study in enumerate(case_studies):
             time.sleep(0.5)
@@ -223,7 +224,7 @@ class SetupCaseStudies(BrowserView):
             logger.info("Setup case study %s of %s %s ",
                         index+1, len(case_studies), url_case_study)
 
-            create_case_study(url_case_study, parent)
+            create_case_study(url_case_study, parent, sources_folder)
 
         alsoProvides(self.request, IDisableCSRFProtection)
 
@@ -264,180 +265,169 @@ class SetupMeasuresCatalogue(BrowserView):
         sources_folder = create_content(
             self.context, "Document", title='Sources')
 
-        for index, measure in enumerate(measures[30:40]):
-            try:
-                time.sleep(0.5)
+        for index, measure in enumerate(measures):
+            time.sleep(0.5)
 
-                anchor = measure.find("a")
+            anchor = measure.find("a")
 
-                if not anchor:
-                    continue
-
-                url_measure = NWRM_BASE_URL + anchor.attrs["href"]
-                if "index.php" in url_measure:
-                    url_measure = url_measure.replace("index.php/", "")
-
-                page_measure = requests.get(url_measure)
-                soup_measure = BeautifulSoup(
-                    page_measure.content, "html.parser")
-
-                logger.info("Create measure %s of %s %s ",
-                            index+1, len(measures), url_measure)
-
-                # setup soup
-                title = soup_measure.find(class_="field--name-title").text
-                code = soup_measure.find(
-                    class_="field--name-field-nwrm-nwrm-code").find(
-                        class_="field__item").text
-                sector = soup_measure.find(
-                    class_="field--name-field-nwrm-real-sector").find(
-                        class_="field__item").text
-                other_sector = soup_measure.find(
-                    class_="field--name-field-other-sector-s-") or ''
-
-                if other_sector:
-                    other_sector = other_sector.findAll(
-                        class_="field__item")
-                    other_sector = ", ".join([x.text for x in other_sector])
-
-                summary = soup_measure.find(
-                    class_="field--name-field-nwrm-nwrm-summary").find(
-                        class_="field__item")
-                possible_benefits = soup_measure.find(
-                    class_="field--name-field-nwrm-benefits-w-level").find(
-                        class_="field__items")
-                case_studies = soup_measure.find(
-                    class_="field--name-field-nwrm-nwrm-css")
-
-                if case_studies:
-                    case_studies = case_studies.findAll(class_="field__item")
-
-                id_measure = url_normalizer.normalize(
-                    url_measure.split("/")[-1])
-                item = create_content(
-                    measure_folder, "measure", title=title, id=id_measure)
-
-                # set object attribute other fields
-                item.measure_code = code
-                item.measure_sector = sector
-                item.other_sector = other_sector
-                item.measure_summary = t2r(summary)
-                item.possible_benefits = t2r(possible_benefits)
-
-                # complete description PDF file
-                complete_description = soup_measure.find(
-                    class_="field--name-field-nwrm-nwrm-file").find(
-                        class_="field__item")
-                complete_descr_url = NWRM_BASE_URL + \
-                    complete_description.find('a').attrs['href']
-                complete_descr_file = requests.get(complete_descr_url).content
-                complete_descr_filename = complete_description.find('a').text
-
-                file_desc = create_content(
-                    item, "File", title=complete_descr_filename)
-                file_desc.file = NamedBlobFile(
-                    data=complete_descr_file, filename=complete_descr_filename)
-
-                # images
-                image_container = soup_measure.find(
-                    class_="field--name-field-illustration-s-").find(
-                        class_='field__item')
-
-                if image_container.find('table'):
-                    # multiple images
-                    table_rows = image_container.findAll('tr')
-                    # first row has the images, second row the title and source
-                    first_row = table_rows[0].findAll('td')
-                    second_row = table_rows[1].findAll('td')
-                    
-                    if not table_rows[1].find("img"):
-                        # layout type 1 (images first row, sources second row)
-                        for img_index, _ in enumerate(first_row):
-                            img_src = first_row[img_index].find('img').attrs['src']
-                            img_content = requests.get(img_src).content
-                            img_filename = img_src.split('/')[-1]
-                            # sometimes in the second row we have lesser columns
-                            # because of colspan
-                            try:
-                                img_title = second_row[img_index].findAll(
-                                    'p')[0].text
-                                img_description = second_row[img_index].findAll(
-                                    'p')[1].text
-                            except Exception:
-                                img_title = second_row[-1].findAll('p')[0].text
-                                img_description = second_row[-1].findAll(
-                                    'p')[1].text
-
-                            img = create_content(
-                                item, "Image", title=img_title)
-                            img.description = img_description
-                            img.image = NamedBlobImage(
-                                data=img_content, filename=img_filename)
-                    else:
-                        # layout type 2 (images on both rows)
-                        for table_row in table_rows:
-                            img_src = table_row.find('img').attrs['src']
-                            img_content = requests.get(img_src).content
-                            img_filename = img_src.split('/')[-1]
-                            img_title = table_row.findAll('td')[1].findAll(
-                                'p')[0].text
-                            img_description = table_row.findAll('td')[1].findAll(
-                                'p')[1].text
-
-                            img = create_content(
-                                item, "Image", title=img_title)
-                            img.description = img_description
-                            img.image = NamedBlobImage(
-                                data=img_content, filename=img_filename)
-
-                else:
-                    # single image
-                    if not image_container.findAll('p')[-1].findChildren():
-                        # handle special cases when last paragraph is empty
-                        image_container.findAll('p')[-1].decompose()
-
-                    img_src = image_container.find('img').attrs['src']
-                    img_content = requests.get(img_src).content
-                    img_title = image_container.findAll('p')[-2].text
-                    img_description = image_container.findAll('p')[-1].text
-                    img_filename = img_src.split('/')[-1]
-
-                    img = create_content(
-                        item, "Image", title=img_title)
-                    img.description = img_description
-                    img.image = NamedBlobImage(
-                        data=img_content, filename=img_filename)
-
-                # set case studies relation
-                if case_studies:
-                    for case_study in case_studies:
-                        # cs_title = case_study.find("a").text
-                        cs_id = case_study.find(
-                            "a").attrs['href'].split("/")[-1]
-                        case_study_obj = get_object_by_id(
-                            "case_study", cs_id)
-
-                        if not case_study_obj:
-                            case_study_url = NWRM_BASE_URL + \
-                                case_study.find("a").attrs['href']
-                            case_study_obj = create_case_study(
-                                case_study_url,
-                                case_study_folder,
-                                sources_folder)
-
-                        relapi.link_objects(
-                            item, case_study_obj, 'case_studies')
-
-                # item.reindexObject()
-            except AttributeError:
-                print(traceback.format_exc())
+            if not anchor:
                 continue
 
-            except Exception:
-                print(traceback.format_exc())
-                break
-                # import pdb; pdb.set_trace()
-                # continue
+            url_measure = NWRM_BASE_URL + anchor.attrs["href"]
+            if "index.php" in url_measure:
+                url_measure = url_measure.replace("index.php/", "")
+
+            page_measure = requests.get(url_measure)
+            soup_measure = BeautifulSoup(
+                page_measure.content, "html.parser")
+
+            logger.info("Create measure %s of %s %s ",
+                        index+1, len(measures), url_measure)
+
+            # setup soup
+            title = soup_measure.find(class_="field--name-title").text
+            code = soup_measure.find(
+                class_="field--name-field-nwrm-nwrm-code").find(
+                    class_="field__item").text
+            sector = soup_measure.find(
+                class_="field--name-field-nwrm-real-sector").find(
+                    class_="field__item").text
+            other_sector = soup_measure.find(
+                class_="field--name-field-other-sector-s-") or ''
+
+            if other_sector:
+                other_sector = other_sector.findAll(
+                    class_="field__item")
+                other_sector = ", ".join([x.text for x in other_sector])
+
+            summary = soup_measure.find(
+                class_="field--name-field-nwrm-nwrm-summary").find(
+                    class_="field__item")
+            possible_benefits = soup_measure.find(
+                class_="field--name-field-nwrm-benefits-w-level").find(
+                    class_="field__items")
+            case_studies = soup_measure.find(
+                class_="field--name-field-nwrm-nwrm-css")
+
+            if case_studies:
+                case_studies = case_studies.findAll(class_="field__item")
+
+            id_measure = url_normalizer.normalize(
+                url_measure.split("/")[-1])
+            item = create_content(
+                measure_folder, "measure", title=title, id=id_measure)
+
+            # set object attribute other fields
+            item.measure_code = code
+            item.measure_sector = sector
+            item.other_sector = other_sector
+            item.measure_summary = t2r(summary)
+            item.possible_benefits = t2r(possible_benefits)
+
+            # complete description PDF file
+            complete_description = soup_measure.find(
+                class_="field--name-field-nwrm-nwrm-file").find(
+                    class_="field__item")
+            complete_descr_url = NWRM_BASE_URL + \
+                complete_description.find('a').attrs['href']
+            complete_descr_file = requests.get(complete_descr_url).content
+            complete_descr_filename = complete_description.find('a').text
+
+            file_desc = create_content(
+                item, "File", title=complete_descr_filename)
+            file_desc.file = NamedBlobFile(
+                data=complete_descr_file, filename=complete_descr_filename)
+
+            # images
+            image_container = soup_measure.find(
+                class_="field--name-field-illustration-s-").find(
+                    class_='field__item')
+
+            if image_container.find('table'):
+                # multiple images
+                table_rows = image_container.findAll('tr')
+                # first row has the images, second row the title and source
+                first_row = table_rows[0].findAll('td')
+                second_row = table_rows[1].findAll('td')
+
+                if not table_rows[1].find("img"):
+                    # layout type 1 (images first row, sources second row)
+                    for img_ind, _ in enumerate(first_row):
+                        img_src = first_row[img_ind].find(
+                            'img').attrs['src']
+                        img_content = requests.get(img_src).content
+                        img_filename = img_src.split('/')[-1]
+                        # sometimes in the second row we have less columns
+                        # because of colspan
+                        try:
+                            img_title = second_row[img_ind].findAll(
+                                'p')[0].text
+                            img_description = second_row[img_ind].findAll(
+                                'p')[1].text
+                        except Exception:
+                            img_title = second_row[-1].findAll('p')[0].text
+                            img_description = second_row[-1].findAll(
+                                'p')[1].text
+
+                        img = create_content(
+                            item, "Image", title=img_title)
+                        img.description = img_description
+                        img.image = NamedBlobImage(
+                            data=img_content, filename=img_filename)
+                else:
+                    # layout type 2 (images on both rows)
+                    for table_row in table_rows:
+                        img_src = table_row.find('img').attrs['src']
+                        img_content = requests.get(img_src).content
+                        img_filename = img_src.split('/')[-1]
+                        img_title = table_row.findAll('td')[1].findAll(
+                            'p')[0].text
+                        img_description = table_row.findAll('td')[1].findAll(
+                            'p')[1].text
+
+                        img = create_content(
+                            item, "Image", title=img_title)
+                        img.description = img_description
+                        img.image = NamedBlobImage(
+                            data=img_content, filename=img_filename)
+
+            else:
+                # single image
+                if not image_container.findAll('p')[-1].findChildren():
+                    # handle special cases when last paragraph is empty
+                    image_container.findAll('p')[-1].decompose()
+
+                img_src = image_container.find('img').attrs['src']
+                img_content = requests.get(img_src).content
+                img_title = image_container.findAll('p')[-2].text
+                img_description = image_container.findAll('p')[-1].text
+                img_filename = img_src.split('/')[-1]
+
+                img = create_content(
+                    item, "Image", title=img_title)
+                img.description = img_description
+                img.image = NamedBlobImage(
+                    data=img_content, filename=img_filename)
+
+            # set case studies relation
+            if case_studies:
+                for case_study in case_studies:
+                    # cs_title = case_study.find("a").text
+                    cs_id = case_study.find(
+                        "a").attrs['href'].split("/")[-1]
+                    case_study_obj = get_object_by_id(
+                        "case_study", cs_id)
+
+                    if not case_study_obj:
+                        case_study_url = NWRM_BASE_URL + \
+                            case_study.find("a").attrs['href']
+                        case_study_obj = create_case_study(
+                            case_study_url,
+                            case_study_folder,
+                            sources_folder)
+
+                    relapi.link_objects(
+                        item, case_study_obj, 'case_studies')
 
             transaction.commit()
 
