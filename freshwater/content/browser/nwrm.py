@@ -4,6 +4,7 @@ import logging
 import time
 import requests
 import traceback
+import transaction
 from bs4 import BeautifulSoup
 
 from Products.Five.browser import BrowserView
@@ -49,7 +50,7 @@ def get_object_by_id(content_type, obj_id):
 
 
 def create_source(url_source, sources_folder):
-    time.sleep(0.2)
+    time.sleep(0.5)
     url_normalizer = queryUtility(IURLNormalizer)
 
     page_source = requests.get(url_source)
@@ -91,7 +92,7 @@ def create_source(url_source, sources_folder):
 
 def create_case_study(url_case_study, parent, sources_folder):
     try:
-        time.sleep(0.2)
+        time.sleep(0.5)
         url_normalizer = queryUtility(IURLNormalizer)
 
         page_case_study = requests.get(url_case_study)
@@ -125,7 +126,7 @@ def create_case_study(url_case_study, parent, sources_folder):
 
         # get in-depth description and save the file
         file_soup = general.find(class_="field--name-field-nwrm-cs-file")
-        
+
         if file_soup:
             filename = file_soup.find('a').text
             file_url = NWRM_BASE_URL + file_soup.find('a').attrs['href']
@@ -177,15 +178,20 @@ def create_case_study(url_case_study, parent, sources_folder):
             measures_orig.decompose()
 
         # set attributes
-        item.general = t2r(general)
-        item.site_information = t2r(site_info)
-        item.monitoring_maintenance = t2r(monitoring_maintenance)
-        item.performance = t2r(performance)
-        item.design_and_implementations = t2r(design_implementations)
-        item.lessons_risks_implications = t2r(lessons_risks)
-        item.policy_general_governance = t2r(policy_general_gov)
-        item.socio_economic = t2r(socio_economic)
-        item.biophysical_impacts = t2r(biophysical_impacts)
+        item.general = t2r(general, remove_last_column=True)
+        item.site_information = t2r(site_info, remove_last_column=True)
+        item.monitoring_maintenance = t2r(
+            monitoring_maintenance, remove_last_column=True)
+        item.performance = t2r(performance, remove_last_column=True)
+        item.design_and_implementations = t2r(
+            design_implementations, remove_last_column=True)
+        item.lessons_risks_implications = t2r(
+            lessons_risks, remove_last_column=True)
+        item.policy_general_governance = t2r(
+            policy_general_gov, remove_last_column=True)
+        item.socio_economic = t2r(socio_economic, remove_last_column=True)
+        item.biophysical_impacts = t2r(
+            biophysical_impacts, remove_last_column=True)
     except:
         print(traceback.format_exc())
 
@@ -258,9 +264,9 @@ class SetupMeasuresCatalogue(BrowserView):
         sources_folder = create_content(
             self.context, "Document", title='Sources')
 
-        for index, measure in enumerate(measures[:1]):
+        for index, measure in enumerate(measures[30:40]):
             try:
-                time.sleep(0.2)
+                time.sleep(0.5)
 
                 anchor = measure.find("a")
 
@@ -343,30 +349,53 @@ class SetupMeasuresCatalogue(BrowserView):
                     # first row has the images, second row the title and source
                     first_row = table_rows[0].findAll('td')
                     second_row = table_rows[1].findAll('td')
+                    
+                    if not table_rows[1].find("img"):
+                        # layout type 1 (images first row, sources second row)
+                        for img_index, _ in enumerate(first_row):
+                            img_src = first_row[img_index].find('img').attrs['src']
+                            img_content = requests.get(img_src).content
+                            img_filename = img_src.split('/')[-1]
+                            # sometimes in the second row we have lesser columns
+                            # because of colspan
+                            try:
+                                img_title = second_row[img_index].findAll(
+                                    'p')[0].text
+                                img_description = second_row[img_index].findAll(
+                                    'p')[1].text
+                            except Exception:
+                                img_title = second_row[-1].findAll('p')[0].text
+                                img_description = second_row[-1].findAll(
+                                    'p')[1].text
 
-                    for img_index, _ in enumerate(first_row):
-                        img_src = first_row[img_index].find('img').attrs['src']
-                        img_content = requests.get(img_src).content
-                        img_filename = img_src.split('/')[-1]
-                        # sometimes in the second row we have lesser columns
-                        # because of colspan
-                        try:
-                            img_title = second_row[img_index].findAll(
+                            img = create_content(
+                                item, "Image", title=img_title)
+                            img.description = img_description
+                            img.image = NamedBlobImage(
+                                data=img_content, filename=img_filename)
+                    else:
+                        # layout type 2 (images on both rows)
+                        for table_row in table_rows:
+                            img_src = table_row.find('img').attrs['src']
+                            img_content = requests.get(img_src).content
+                            img_filename = img_src.split('/')[-1]
+                            img_title = table_row.findAll('td')[1].findAll(
                                 'p')[0].text
-                            img_description = second_row[img_index].findAll(
-                                'p')[1].text
-                        except Exception:
-                            img_title = second_row[-1].findAll('p')[0].text
-                            img_description = second_row[-1].findAll(
+                            img_description = table_row.findAll('td')[1].findAll(
                                 'p')[1].text
 
-                        img = create_content(
-                            item, "Image", title=img_title)
-                        img.description = img_description
-                        img.image = NamedBlobImage(
-                            data=img_content, filename=img_filename)
+                            img = create_content(
+                                item, "Image", title=img_title)
+                            img.description = img_description
+                            img.image = NamedBlobImage(
+                                data=img_content, filename=img_filename)
+
                 else:
                     # single image
+                    if not image_container.findAll('p')[-1].findChildren():
+                        # handle special cases when last paragraph is empty
+                        image_container.findAll('p')[-1].decompose()
+
                     img_src = image_container.find('img').attrs['src']
                     img_content = requests.get(img_src).content
                     img_title = image_container.findAll('p')[-2].text
@@ -392,19 +421,25 @@ class SetupMeasuresCatalogue(BrowserView):
                             case_study_url = NWRM_BASE_URL + \
                                 case_study.find("a").attrs['href']
                             case_study_obj = create_case_study(
-                                case_study_url, 
-                                case_study_folder, 
+                                case_study_url,
+                                case_study_folder,
                                 sources_folder)
 
                         relapi.link_objects(
                             item, case_study_obj, 'case_studies')
 
                 # item.reindexObject()
-
-            except Exception as e:
+            except AttributeError:
                 print(traceback.format_exc())
+                continue
+
+            except Exception:
+                print(traceback.format_exc())
+                break
                 # import pdb; pdb.set_trace()
                 # continue
+
+            transaction.commit()
 
         alsoProvides(self.request, IDisableCSRFProtection)
 

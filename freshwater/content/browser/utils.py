@@ -7,7 +7,7 @@ from Products.Five.browser import BrowserView
 from zope.interface import alsoProvides
 
 
-def t2r(text):
+def t2r(text, remove_last_column=False):
     """ transform string to richtext """
 
     if not text:
@@ -25,7 +25,7 @@ def t2r(text):
                 item.string = "No data"
 
     # remove last column from tables
-    if text.find('table'):
+    if remove_last_column and text.find('table'):
         tables = text.findAll("table")
 
         for table in tables:
