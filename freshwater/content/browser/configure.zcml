@@ -18,6 +18,13 @@
     />
 
   <browser:page
+      name="case-studies-map.arcgis.json"
+      for="*"
+      class=".casestudies_map.Items"
+      permission="zope2.View"
+      />
+
+  <browser:page
     for="*"
     name="topdb"
     class=".utils.ToPDB"

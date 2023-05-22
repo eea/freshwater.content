@@ -192,6 +192,25 @@ def create_case_study(url_case_study, parent, sources_folder):
         item.socio_economic = t2r(socio_economic, remove_last_column=True)
         item.biophysical_impacts = t2r(
             biophysical_impacts, remove_last_column=True)
+        item.nwrm_type = site_info.find(
+            class_="field--name-field-nwrm-cs-light-depth").find(
+                class_="field__item").text
+        
+        longitude = general.find(
+            class_="field--name-field-nwrm-cs-longitude")
+        if longitude:
+            longitude = longitude.find(class_="field__item").text
+        
+        latitude = general.find(
+            class_="field--name-field-nwrm-cs-latitude")
+        if latitude:
+            latitude = latitude.find(class_="field__item").text
+        
+        if longitude and latitude:
+            item.nwrm_geolocation = "{},{}".format(longitude, latitude)
+        else:
+            item.nwrm_geolocation = ""
+
     except Exception:
         # print(traceback.format_exc())
         pass
@@ -201,6 +220,7 @@ def create_case_study(url_case_study, parent, sources_folder):
 
 class SetupCaseStudies(BrowserView):
     """ Crawler to get the case studies from the nwrm site
+    NOT USED ANYMORE
     """
 
     def __call__(self):
