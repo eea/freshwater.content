@@ -52,6 +52,15 @@ class Items(BrowserView):
             if not getattr(obj, "nwrm_geolocation", ""):
                 continue
             long_description = ""
+            measures = []
+
+            if obj.measures:
+                measures = [
+                    {"id": measure.to_id,
+                    "title": measure.to_object.title,
+                    "path": measure.to_path.replace("/Plone", "")}
+                    for measure in obj.measures
+                ]
             results["features"].append(
                 {
                     "properties": {
@@ -63,12 +72,7 @@ class Items(BrowserView):
                         "description": long_description,
                         "url": brain.getURL(),
                         "image": "",  # obj.primary_photo and brain.getURL() + "/@@images/primary_photo/preview"
-                        "measures": [
-                            {"id": measure.to_id,
-                             "title": measure.to_object.title,
-                             "path": measure.to_path.replace("/Plone", "")}
-                            for measure in obj.measures
-                        ]
+                        "measures": measures
                     },
                     "geometry": {
                         "type": "Point",

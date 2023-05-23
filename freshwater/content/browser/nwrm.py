@@ -152,9 +152,11 @@ def create_case_study(url_case_study, parent, sources_folder):
 
                 if not source_obj:
                     source_obj = create_source(source_url, sources_folder)
+                else:
+                    relapi.link_objects(
+                        source_obj, item, 'source_case_studies')
 
-                relapi.link_objects(
-                    item, source_obj, 'sources')
+                relapi.link_objects(item, source_obj, 'sources')
 
             sources_orig.decompose()
 
@@ -195,17 +197,17 @@ def create_case_study(url_case_study, parent, sources_folder):
         item.nwrm_type = site_info.find(
             class_="field--name-field-nwrm-cs-light-depth").find(
                 class_="field__item").text
-        
+
         longitude = general.find(
             class_="field--name-field-nwrm-cs-longitude")
         if longitude:
             longitude = longitude.find(class_="field__item").text
-        
+
         latitude = general.find(
             class_="field--name-field-nwrm-cs-latitude")
         if latitude:
             latitude = latitude.find(class_="field__item").text
-        
+
         if longitude and latitude:
             item.nwrm_geolocation = "{},{}".format(longitude, latitude)
         else:
@@ -433,8 +435,8 @@ class SetupMeasuresCatalogue(BrowserView):
             if case_studies:
                 for case_study in case_studies:
                     # cs_title = case_study.find("a").text
-                    cs_id = case_study.find(
-                        "a").attrs['href'].split("/")[-1]
+                    cs_id = url_normalizer.normalize(case_study.find(
+                        "a").attrs['href'].split("/")[-1])
                     case_study_obj = get_object_by_id(
                         "case_study", cs_id)
 
@@ -445,6 +447,9 @@ class SetupMeasuresCatalogue(BrowserView):
                             case_study_url,
                             case_study_folder,
                             sources_folder)
+                    else:
+                        relapi.link_objects(
+                            case_study_obj, item, 'measures')
 
                     relapi.link_objects(
                         item, case_study_obj, 'case_studies')
