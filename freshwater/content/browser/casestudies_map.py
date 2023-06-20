@@ -61,6 +61,12 @@ class Items(BrowserView):
                     "path": measure.to_path.replace("/Plone", "")}
                     for measure in obj.measures
                 ]
+            
+            sectors = [
+                measure.to_object.measure_sector
+                for measure in obj.measures
+            ]
+
             results["features"].append(
                 {
                     "properties": {
@@ -71,8 +77,10 @@ class Items(BrowserView):
                         "title": obj.title,
                         "description": long_description,
                         "url": brain.getURL(),
+                        "path": "/".join(obj.getPhysicalPath()).replace('/Plone', ''),
                         "image": "",  # obj.primary_photo and brain.getURL() + "/@@images/primary_photo/preview"
-                        "measures": measures
+                        "measures": measures,  # nwrms_implemented
+                        "sectors": sorted(list(set(sectors)))
                     },
                     "geometry": {
                         "type": "Point",

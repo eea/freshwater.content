@@ -1,11 +1,14 @@
 """ module to setup NWRM data """
 
 import logging
+import lxml
 import time
 # import traceback
 import transaction
 import requests
+import xlsxwriter
 from bs4 import BeautifulSoup
+from io import BytesIO
 
 from Products.Five.browser import BrowserView
 from plone import api
@@ -220,39 +223,6 @@ def create_case_study(url_case_study, parent, sources_folder):
     return item
 
 
-class SetupCaseStudies(BrowserView):
-    """ Crawler to get the case studies from the nwrm site
-    NOT USED ANYMORE
-    """
-
-    def __call__(self):
-        parent = self.context
-        case_studies_url = "http://nwrm.eu/list-of-all-case-studies"
-        base_page = requests.get(case_studies_url)
-        base_soup = BeautifulSoup(base_page.content, "html.parser")
-        case_studies = base_soup.find_all("td", class_="views-field-title")
-        sources_folder = create_content(
-            self.context, "Document", title='Sources')
-
-        for index, case_study in enumerate(case_studies):
-            time.sleep(0.5)
-
-            anchor = case_study.find("a")
-
-            if not anchor:
-                continue
-
-            url_case_study = NWRM_BASE_URL + anchor.attrs["href"]
-            logger.info("Setup case study %s of %s %s ",
-                        index+1, len(case_studies), url_case_study)
-
-            create_case_study(url_case_study, parent, sources_folder)
-
-        alsoProvides(self.request, IDisableCSRFProtection)
-
-        return "Setup completed!"
-
-
 class SetupMeasuresCatalogue(BrowserView):
     """ Crawler to get the measures from the nwrm site
     """
@@ -459,3 +429,66 @@ class SetupMeasuresCatalogue(BrowserView):
         alsoProvides(self.request, IDisableCSRFProtection)
 
         return "Setup completed!"
+
+
+class ExportMeasuresXls(BrowserView):
+    """ Export measures as excel """
+
+    def __call__(self):
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        results = portal_catalog.searchResults(portal_type='measure')
+        measures = [x.getObject() for x in results]
+
+        data = []
+        for measure in measures:
+            benefits = lxml.etree.fromstring(measure.possible_benefits.raw)
+            table_rows = benefits.xpath('//tbody/tr')
+
+            for row in table_rows:
+                row_data = {}
+                row_data['title'] = measure.title
+                row_data['url'] = "{}/{}".format(
+                    "https://wise-test.eionet.europa.eu/freshwater/nwrm-imported/nwrm-measures-catalogue",
+                    measure.getPhysicalPath()[-1])
+
+                if not row.xpath('./td/div'):
+                    continue
+
+                row_data['benefit'] = row.xpath('./td/div')[0].text
+                row_data['level'] = row.xpath('./td/div')[1].text
+
+                data.append(row_data)
+
+        headers = ['title', 'url', 'level', 'benefit']
+
+        # Create a workbook and add a worksheet.
+        out = BytesIO()
+        workbook = xlsxwriter.Workbook(out, {'in_memory': True})
+
+        wtitle = 'Broken-Links'
+        worksheet = workbook.add_worksheet(wtitle[:30])
+
+        for i, title in enumerate(headers):
+            worksheet.write(0, i, title or '')
+
+        row_index = 1
+
+        for row in data:
+            for index, header in enumerate(headers):
+                worksheet.write(row_index, index, row.get(header, ''))
+
+            row_index += 1
+
+        workbook.close()
+        out.seek(0)
+
+        xlsio = out
+        sh = self.request.response.setHeader
+
+        sh('Content-Type', 'application/vnd.openxmlformats-officedocument.'
+           'spreadsheetml.sheet')
+        fname = "-".join(["Measures"])
+        sh('Content-Disposition',
+           'attachment; filename=%s.xlsx' % fname)
+
+        return xlsio.read()

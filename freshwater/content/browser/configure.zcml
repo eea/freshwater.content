@@ -5,13 +5,6 @@
 
   <browser:page
     for="*"
-    name="setup-case-studies"
-    class=".nwrm.SetupCaseStudies"
-    permission="cmf.ManagePortal"
-    />
-
-  <browser:page
-    for="*"
     name="setup-measures-catalogue"
     class=".nwrm.SetupMeasuresCatalogue"
     permission="cmf.ManagePortal"
@@ -21,6 +14,13 @@
       name="case-studies-map.arcgis.json"
       for="*"
       class=".casestudies_map.Items"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="export-measures-xls"
+      for="*"
+      class=".nwrm.ExportMeasuresXls"
       permission="zope2.View"
       />
 
