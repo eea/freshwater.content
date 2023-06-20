@@ -1,10 +1,16 @@
 """ module to setup NWRM data """
 
+from io import BytesIO
+
 import logging
 import time
+
+import lxml
+
 # import traceback
 import transaction
 import requests
+import xlsxwriter
 from bs4 import BeautifulSoup
 
 from Products.Five.browser import BrowserView
@@ -152,9 +158,11 @@ def create_case_study(url_case_study, parent, sources_folder):
 
                 if not source_obj:
                     source_obj = create_source(source_url, sources_folder)
+                else:
+                    relapi.link_objects(
+                        source_obj, item, 'source_case_studies')
 
-                relapi.link_objects(
-                    item, source_obj, 'sources')
+                relapi.link_objects(item, source_obj, 'sources')
 
             sources_orig.decompose()
 
@@ -192,43 +200,30 @@ def create_case_study(url_case_study, parent, sources_folder):
         item.socio_economic = t2r(socio_economic, remove_last_column=True)
         item.biophysical_impacts = t2r(
             biophysical_impacts, remove_last_column=True)
+        item.nwrm_type = site_info.find(
+            class_="field--name-field-nwrm-cs-light-depth").find(
+                class_="field__item").text
+
+        longitude = general.find(
+            class_="field--name-field-nwrm-cs-longitude")
+        if longitude:
+            longitude = longitude.find(class_="field__item").text
+
+        latitude = general.find(
+            class_="field--name-field-nwrm-cs-latitude")
+        if latitude:
+            latitude = latitude.find(class_="field__item").text
+
+        if longitude and latitude:
+            item.nwrm_geolocation = "{},{}".format(longitude, latitude)
+        else:
+            item.nwrm_geolocation = ""
+
     except Exception:
         # print(traceback.format_exc())
         pass
 
     return item
-
-
-class SetupCaseStudies(BrowserView):
-    """ Crawler to get the case studies from the nwrm site
-    """
-
-    def __call__(self):
-        parent = self.context
-        case_studies_url = "http://nwrm.eu/list-of-all-case-studies"
-        base_page = requests.get(case_studies_url)
-        base_soup = BeautifulSoup(base_page.content, "html.parser")
-        case_studies = base_soup.find_all("td", class_="views-field-title")
-        sources_folder = create_content(
-            self.context, "Document", title='Sources')
-
-        for index, case_study in enumerate(case_studies):
-            time.sleep(0.5)
-
-            anchor = case_study.find("a")
-
-            if not anchor:
-                continue
-
-            url_case_study = NWRM_BASE_URL + anchor.attrs["href"]
-            logger.info("Setup case study %s of %s %s ",
-                        index+1, len(case_studies), url_case_study)
-
-            create_case_study(url_case_study, parent, sources_folder)
-
-        alsoProvides(self.request, IDisableCSRFProtection)
-
-        return "Setup completed!"
 
 
 class SetupMeasuresCatalogue(BrowserView):
@@ -413,8 +408,8 @@ class SetupMeasuresCatalogue(BrowserView):
             if case_studies:
                 for case_study in case_studies:
                     # cs_title = case_study.find("a").text
-                    cs_id = case_study.find(
-                        "a").attrs['href'].split("/")[-1]
+                    cs_id = url_normalizer.normalize(case_study.find(
+                        "a").attrs['href'].split("/")[-1])
                     case_study_obj = get_object_by_id(
                         "case_study", cs_id)
 
@@ -425,6 +420,9 @@ class SetupMeasuresCatalogue(BrowserView):
                             case_study_url,
                             case_study_folder,
                             sources_folder)
+                    else:
+                        relapi.link_objects(
+                            case_study_obj, item, 'measures')
 
                     relapi.link_objects(
                         item, case_study_obj, 'case_studies')
@@ -434,3 +432,67 @@ class SetupMeasuresCatalogue(BrowserView):
         alsoProvides(self.request, IDisableCSRFProtection)
 
         return "Setup completed!"
+
+
+class ExportMeasuresXls(BrowserView):
+    """ Export measures as excel """
+
+    def __call__(self):
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        results = portal_catalog.searchResults(portal_type='measure')
+        measures = [x.getObject() for x in results]
+
+        data = []
+        for measure in measures:
+            benefits = lxml.etree.fromstring(measure.possible_benefits.raw)
+            table_rows = benefits.xpath('//tbody/tr')
+
+            for row in table_rows:
+                row_data = {}
+                row_data['title'] = measure.title
+                row_data['url'] = "{}/{}".format(
+                    "https://wise-test.eionet.europa.eu/freshwater"
+                    "/nwrm-imported/nwrm-measures-catalogue",
+                    measure.getPhysicalPath()[-1])
+
+                if not row.xpath('./td/div'):
+                    continue
+
+                row_data['benefit'] = row.xpath('./td/div')[0].text
+                row_data['level'] = row.xpath('./td/div')[1].text
+
+                data.append(row_data)
+
+        headers = ['title', 'url', 'level', 'benefit']
+
+        # Create a workbook and add a worksheet.
+        out = BytesIO()
+        workbook = xlsxwriter.Workbook(out, {'in_memory': True})
+
+        wtitle = 'Broken-Links'
+        worksheet = workbook.add_worksheet(wtitle[:30])
+
+        for i, title in enumerate(headers):
+            worksheet.write(0, i, title or '')
+
+        row_index = 1
+
+        for row in data:
+            for index, header in enumerate(headers):
+                worksheet.write(row_index, index, row.get(header, ''))
+
+            row_index += 1
+
+        workbook.close()
+        out.seek(0)
+
+        xlsio = out
+        sh = self.request.response.setHeader
+
+        sh('Content-Type', 'application/vnd.openxmlformats-officedocument.'
+           'spreadsheetml.sheet')
+        fname = "-".join(["Measures"])
+        sh('Content-Disposition',
+           'attachment; filename=%s.xlsx' % fname)
+
+        return xlsio.read()
