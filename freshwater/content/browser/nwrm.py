@@ -1,14 +1,17 @@
 """ module to setup NWRM data """
 
+from io import BytesIO
+
 import logging
-import lxml
 import time
+
+import lxml
+
 # import traceback
 import transaction
 import requests
 import xlsxwriter
 from bs4 import BeautifulSoup
-from io import BytesIO
 
 from Products.Five.browser import BrowserView
 from plone import api
@@ -448,7 +451,8 @@ class ExportMeasuresXls(BrowserView):
                 row_data = {}
                 row_data['title'] = measure.title
                 row_data['url'] = "{}/{}".format(
-                    "https://wise-test.eionet.europa.eu/freshwater/nwrm-imported/nwrm-measures-catalogue",
+                    "https://wise-test.eionet.europa.eu/freshwater"
+                    "/nwrm-imported/nwrm-measures-catalogue",
                     measure.getPhysicalPath()[-1])
 
                 if not row.xpath('./td/div'):

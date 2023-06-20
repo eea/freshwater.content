@@ -1,3 +1,5 @@
+""" Case studies json  """
+
 import json
 import logging
 
@@ -13,20 +15,16 @@ logger = logging.getLogger("eea.climateadapt")
 
 
 class Items(BrowserView):
+    """ Items"""
+
     def __call__(self):
         """"""
-        # factory = getUtility(
-        #     IVocabularyFactory, "eea.climateadapt.aceitems_climateimpacts"
-        # )
-        # vocabulary_impacts = factory(self.context)
-        # factory = getUtility(IVocabularyFactory, "eea.climateadapt.aceitems_sectors")
-        # vocabulary_sectors = factory(self.context)
-
         results = {
             "type": "FeatureCollection",
             "metadata": {
                 "generated": 1615559750000,
-                "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
+                "url": "https://earthquake.usgs.gov/earthquakes"
+                    "/feed/v1.0/summary/all_month.geojson",
                 "title": "WISE Freshwater arcgis items",
                 "status": 200,
                 "api": "1.10.3",
@@ -46,7 +44,6 @@ class Items(BrowserView):
             }
         )
 
-        iPos = 0
         for brain in brains:
             obj = brain.getObject()
             if not getattr(obj, "nwrm_geolocation", ""):
@@ -57,11 +54,11 @@ class Items(BrowserView):
             if obj.measures:
                 measures = [
                     {"id": measure.to_id,
-                    "title": measure.to_object.title,
-                    "path": measure.to_path.replace("/Plone", "")}
+                     "title": measure.to_object.title,
+                     "path": measure.to_path.replace("/Plone", "")}
                     for measure in obj.measures
                 ]
-            
+
             sectors = [
                 measure.to_object.measure_sector
                 for measure in obj.measures
@@ -77,8 +74,9 @@ class Items(BrowserView):
                         "title": obj.title,
                         "description": long_description,
                         "url": brain.getURL(),
-                        "path": "/".join(obj.getPhysicalPath()).replace('/Plone', ''),
-                        "image": "",  # obj.primary_photo and brain.getURL() + "/@@images/primary_photo/preview"
+                        "path": "/".join(obj.getPhysicalPath()).replace(
+                            '/Plone', ''),
+                        "image": "",
                         "measures": measures,  # nwrms_implemented
                         "sectors": sorted(list(set(sectors)))
                     },
@@ -96,7 +94,6 @@ class Items(BrowserView):
                     },
                 }
             )
-            iPos = iPos + 1
 
         response = self.request.response
         response.setHeader("Content-type", "application/json")
