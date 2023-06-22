@@ -55,7 +55,8 @@ class Items(BrowserView):
                 measures = [
                     {"id": measure.to_id,
                      "title": measure.to_object.title,
-                     "path": measure.to_path.replace("/Plone", "")}
+                     "path": "/freshwater" +
+                        measure.to_path.replace("/Plone", "")}
                     for measure in obj.measures
                 ]
 
@@ -74,8 +75,8 @@ class Items(BrowserView):
                         "title": obj.title,
                         "description": long_description,
                         "url": brain.getURL(),
-                        "path": "/".join(obj.getPhysicalPath()).replace(
-                            '/Plone', ''),
+                        "path": "/freshwater" + "/".join(
+                            obj.getPhysicalPath()).replace('/Plone', ''),
                         "image": "",
                         "measures": measures,  # nwrms_implemented
                         "sectors": sorted(list(set(sectors)))
