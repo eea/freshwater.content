@@ -55,8 +55,8 @@ class Items(BrowserView):
                 measures = [
                     {"id": measure.to_id,
                      "title": measure.to_object.title,
-                     "path": "/freshwater"
-                        + measure.to_path.replace("/Plone", "")}
+                     "path": "/freshwater" +
+                        measure.to_path.replace("/Plone", "")}
                     for measure in obj.measures
                 ]
 
