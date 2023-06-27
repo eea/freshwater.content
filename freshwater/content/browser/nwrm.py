@@ -1,7 +1,9 @@
 """ module to setup NWRM data """
 
 from io import BytesIO
+from collections import defaultdict
 
+import json
 import logging
 import time
 
@@ -27,6 +29,17 @@ from .utils import t2r
 logger = logging.getLogger('freshwater.content')
 
 NWRM_BASE_URL = "http://nwrm.eu"
+
+
+def css_select_one(node, selector):
+    """ cssselect to return only one result """
+
+    value = node.cssselect(selector)
+
+    if value:
+        return value[0].text
+
+    return ""
 
 
 def get_section_by_id(soup, id_section):
@@ -469,7 +482,7 @@ class ExportMeasuresXls(BrowserView):
         out = BytesIO()
         workbook = xlsxwriter.Workbook(out, {'in_memory': True})
 
-        wtitle = 'Broken-Links'
+        wtitle = 'Measures'
         worksheet = workbook.add_worksheet(wtitle[:30])
 
         for i, title in enumerate(headers):
@@ -494,5 +507,114 @@ class ExportMeasuresXls(BrowserView):
         fname = "-".join(["Measures"])
         sh('Content-Disposition',
            'attachment; filename=%s.xlsx' % fname)
+
+        return xlsio.read()
+
+
+class ExportCaseStudiesXls(BrowserView):
+    """ Export measures as excel """
+
+    attributes = ["general", "site_information", "monitoring_maintenance",
+                  "performance", "design_and_implementations",
+                  "lessons_risks_implications", "policy_general_governance",
+                  "socio_economic", "biophysical_impacts"]
+
+    def get_value(self, node):
+        """ return a value for a field"""
+
+        if node.cssselect('table'):
+            result = []
+            headers = [
+                n.text
+                for n in node.cssselect('table thead th em')]
+
+            rows = node.cssselect('table tbody tr')
+
+            for row in rows:
+                tds = row.cssselect('td')
+                values = []
+
+                for td in tds:
+                    div = td.cssselect('div')
+                    v = div and div[0].text or ''
+                    values.append(v)
+
+                result.append(dict(zip(headers, values)))
+
+            return json.dumps(result)
+
+        if node.cssselect('div.field__item'):
+            return css_select_one(node, 'div.field__item')
+
+        return "!NOT IMPLEMENTED!"
+
+    def __call__(self):
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        results = portal_catalog.searchResults(portal_type='case_study')
+        case_studies = [x.getObject() for x in results]
+
+        data = []
+        headers = defaultdict(list)
+
+        for case_study in case_studies:
+            row_data = {"Case study url": "{}/{}".format(
+                "https://wise-test.eionet.europa.eu/freshwater"
+                "/nwrm-imported/nwrm-case-studies",
+                case_study.getPhysicalPath()[-1])}
+
+            for attribute in self.attributes:
+                section_value = getattr(case_study, attribute)
+                section_raw = hasattr(
+                    section_value, 'raw') and section_value.raw or section_value
+
+                if not section_raw:
+                    continue
+
+                field_node = lxml.etree.fromstring(section_raw)
+                nodes = field_node.cssselect('div.field')
+
+                for node in nodes:
+                    label = css_select_one(node, 'div.field__label')
+                    value = self.get_value(node)
+
+                    if label not in headers[attribute]:
+                        headers[attribute].append(label)
+
+                    row_data[label] = value
+                    # import pdb;pdb.set_trace()
+
+            data.append(row_data)
+
+        # Create a workbook and add a worksheet.
+        out = BytesIO()
+        workbook = xlsxwriter.Workbook(out, {'in_memory': True})
+        wtitle = "Case studies"
+        worksheet = workbook.add_worksheet(wtitle[:30])
+
+        headers_unpacked = ['Case study url']
+
+        for section in self.attributes:
+            headers_unpacked.extend(headers[section])
+
+        for i, title in enumerate(headers_unpacked):
+            worksheet.write(0, i, title or '')
+
+        row_index = 1
+
+        for row in data:
+            for index, header in enumerate(headers_unpacked):
+                worksheet.write(row_index, index, row.get(header, ''))
+
+            row_index += 1
+
+        workbook.close()
+        out.seek(0)
+
+        xlsio = out
+        sh = self.request.response.setHeader
+
+        sh('Content-Type', 'application/vnd.openxmlformats-officedocument.'
+           'spreadsheetml.sheet')
+        sh('Content-Disposition', 'attachment; filename=CaseStudies.xlsx')
 
         return xlsio.read()
