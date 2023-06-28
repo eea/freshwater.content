@@ -536,7 +536,7 @@ class ExportCaseStudiesXls(BrowserView):
 
                 for td in tds:
                     div = td.cssselect('div')
-                    v = div and div[0].text or ''
+                    v = div[0].text if div else ''
                     values.append(v)
 
                 result.append(dict(zip(headers, values)))
@@ -564,8 +564,10 @@ class ExportCaseStudiesXls(BrowserView):
 
             for attribute in self.attributes:
                 section_value = getattr(case_study, attribute)
-                section_raw = hasattr(
-                    section_value, 'raw') and section_value.raw or section_value
+                section_raw = (
+                    section_value.raw if hasattr(section_value, 'raw')
+                    else section_value
+                )
 
                 if not section_raw:
                     continue
