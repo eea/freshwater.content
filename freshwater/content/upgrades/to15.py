@@ -9,6 +9,40 @@ from urllib.parse import urlparse
 logger = logging.getLogger('eea.restapi.migration')
 
 
+class DividerBlockTransformer(object):
+
+    """Migrator for divider block."""
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self, block):
+        dirty = False
+
+        if block.get('@type') == 'splitter':
+            old = block
+            block['@type'] = "dividerBlock"
+
+            if block.get("style") == 'simple':
+                block['fitted'] = True
+                block['hidden'] = True
+
+
+            if block.get("style") == 'inline':
+                block['fitted'] = True
+
+            if block.get("style") == 'line':
+                block['fitted'] = True
+                block['short'] = True
+
+            block.pop('style', None)
+
+            logger.info('fixed plotly block: in %s (%s) => (%s)',
+                        self.context, old, block)
+            dirty = True
+
+        return dirty
+
 class PlotlyChartTransformer(object):
 
     """Migrator for plotly charts."""
@@ -58,6 +92,9 @@ def run_upgrade(setup_context):
         if hasattr(obj.aq_inner.aq_self, 'blocks') and \
                 hasattr(obj.aq_inner.aq_self, 'blocks_layout'):
             traverser = BlocksTraverser(obj)
+
+            divider_fixer = DividerBlockTransformer(obj)
+            traverser(divider_fixer)
 
             plotly_fixer = PlotlyChartTransformer(obj)
             traverser(plotly_fixer)
