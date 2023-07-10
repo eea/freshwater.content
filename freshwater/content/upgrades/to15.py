@@ -10,7 +10,6 @@ logger = logging.getLogger('eea.restapi.migration')
 
 
 class DividerBlockTransformer(object):
-
     """Migrator for divider block."""
 
     def __init__(self, context):
@@ -43,7 +42,6 @@ class DividerBlockTransformer(object):
         return dirty
 
 class PlotlyChartTransformer(object):
-
     """Migrator for plotly charts."""
 
     def __init__(self, context):
