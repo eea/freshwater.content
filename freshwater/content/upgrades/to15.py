@@ -4,7 +4,8 @@ import logging
 from urllib.parse import urlparse
 from plone import api
 from freshwater.content.blocks import BlocksTraverser
-from plone.restapi.serializer.utils import uid_to_url  # pylint: disable = C0412
+# pylint: disable = C0412
+from plone.restapi.serializer.utils import uid_to_url
 
 logger = logging.getLogger('eea.restapi.migration')
 
