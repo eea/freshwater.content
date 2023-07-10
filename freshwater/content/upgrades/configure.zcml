@@ -51,5 +51,13 @@
     handler=".to14.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Migrate plotly charts v2"
+    description=""
+    profile="freshwater.content:default"
+    source="*"
+    destination="15"
+    handler=".to15.run_upgrade"
+    />
 
 </configure>

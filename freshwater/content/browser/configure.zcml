@@ -25,6 +25,13 @@
       />
 
   <browser:page
+      name="export-case-studies-xls"
+      for="*"
+      class=".nwrm.ExportCaseStudiesXls"
+      permission="zope2.View"
+      />
+
+  <browser:page
     for="*"
     name="topdb"
     class=".utils.ToPDB"
