@@ -27,7 +27,6 @@ class DividerBlockTransformer(object):
                 block['fitted'] = True
                 block['hidden'] = True
 
-
             if block.get("style") == 'inline':
                 block['fitted'] = True
 
@@ -61,13 +60,13 @@ class PlotlyChartTransformer(object):
             if block.get("provider_url") is not None:
                 url = uid_to_url(block['provider_url'])
                 path = urlparse(url).path
-                
+
                 if path[:6] == "/Plone":
                     path = path[6:]
-                    
+
                 block['visualization']['provider_url'] = path
             else:
-                 block['visualization']['provider_url'] = ''
+                block['visualization']['provider_url'] = ''
 
             block.pop('provider_url', None)
 
