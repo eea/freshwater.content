@@ -3,4 +3,39 @@
   xmlns:browser="http://namespaces.zope.org/browser"
   i18n_domain="eea">
 
+  <browser:page
+    for="*"
+    name="setup-measures-catalogue"
+    class=".nwrm.SetupMeasuresCatalogue"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:page
+      name="case-studies-map.arcgis.json"
+      for="*"
+      class=".casestudies_map.Items"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="export-measures-xls"
+      for="*"
+      class=".nwrm.ExportMeasuresXls"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="export-case-studies-xls"
+      for="*"
+      class=".nwrm.ExportCaseStudiesXls"
+      permission="zope2.View"
+      />
+
+  <browser:page
+    for="*"
+    name="topdb"
+    class=".utils.ToPDB"
+    permission="cmf.ManagePortal"
+    />
+
 </configure>
