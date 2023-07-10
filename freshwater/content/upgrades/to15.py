@@ -1,10 +1,10 @@
 ''' Upgrade to 15 '''
 
 import logging
+from urllib.parse import urlparse
 from plone import api
 from freshwater.content.blocks import BlocksTraverser
 from plone.restapi.serializer.utils import uid_to_url
-from urllib.parse import urlparse
 
 logger = logging.getLogger('eea.restapi.migration')
 
