@@ -20,15 +20,22 @@
   <browser:page
       name="export-measures-xls"
       for="*"
-      class=".nwrm.ExportMeasuresXls"
-      permission="zope2.View"
+      class=".nwrm_exporter.ExportMeasuresXls"
+      permission="cmf.ManagePortal"
       />
 
   <browser:page
       name="export-case-studies-xls"
       for="*"
-      class=".nwrm.ExportCaseStudiesXls"
-      permission="zope2.View"
+      class=".nwrm_exporter.ExportCaseStudiesXls"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
+      name="extract-possible-benefits"
+      for="*"
+      class=".nwrm.PossibleBenefitsExtractor"
+      permission="cmf.ManagePortal"
       />
 
   <browser:page
