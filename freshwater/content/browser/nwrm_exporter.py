@@ -81,7 +81,7 @@ class ExportMeasuresXls(BrowserView):
             worksheet_b.write(0, i, title or '')
 
         benefits_categories = ['biophysical_impacts', 'ecosystem_services',
-                   'policy_objectives']
+                               'policy_objectives']
 
         row_index = 1
         for row in data:

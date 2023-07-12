@@ -1,8 +1,9 @@
 """ module to setup NWRM data """
 
-import lxml
 import logging
 import time
+
+import lxml
 
 # import traceback
 import transaction
@@ -241,8 +242,10 @@ def extract_benefits(measure):
         benefit, level = row.cssselect('td div')
         level = level.text
 
-        benefit_code, benefit_name = map(
-            lambda x: x.strip(), benefit.text.split(" - "))
+        benefit_code, benefit_name = [
+            x.strip()
+            for x in benefit.text.split(" - ")
+        ]
 
         if benefit_code.startswith('BP'):
             biophysical_impacts.append((benefit_code, benefit_name, level))
@@ -257,7 +260,7 @@ def extract_benefits(measure):
     measure._nwrm_ecosystem_services = ecosystem_services
     measure._nwrm_policy_objectives = policy_objectives
 
-    return 'Done'
+    return
 
 
 class SetupMeasuresCatalogue(BrowserView):
