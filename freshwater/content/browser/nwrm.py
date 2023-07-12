@@ -8,6 +8,7 @@ import time
 import transaction
 import requests
 from bs4 import BeautifulSoup
+from persistent.list import PersistentList
 
 from Products.Five.browser import BrowserView
 from plone import api
@@ -232,7 +233,9 @@ def extract_benefits(measure):
     benefits_node = lxml.etree.fromstring(benefits.raw)
     rows = benefits_node.cssselect("table tbody tr")
 
-    ecosystem_services = biophysical_impacts = policy_objectives = []
+    ecosystem_services = PersistentList()
+    biophysical_impacts = PersistentList()
+    policy_objectives = PersistentList()
 
     for row in rows:
         benefit, level = row.cssselect('td div')

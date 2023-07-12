@@ -33,26 +33,26 @@ class ExportMeasuresXls(BrowserView):
 
         data = []
         for measure in measures:
-            benefits = lxml.etree.fromstring(measure.possible_benefits.raw)
-            table_rows = benefits.xpath('//tbody/tr')
+            row_data = {}
+            row_data['title'] = measure.title
+            row_data['url'] = "{}/{}".format(
+                "https://wise-test.eionet.europa.eu/freshwater"
+                "/nwrm-imported/nwrm-measures-catalogue",
+                measure.getPhysicalPath()[-1])
 
-            for row in table_rows:
-                row_data = {}
-                row_data['title'] = measure.title
-                row_data['url'] = "{}/{}".format(
-                    "https://wise-test.eionet.europa.eu/freshwater"
-                    "/nwrm-imported/nwrm-measures-catalogue",
-                    measure.getPhysicalPath()[-1])
+            row_data['code'] = measure.measure_code
+            row_data['sector'] = measure.measure_sector
+            row_data['other_sector'] = measure.other_sector
+            row_data['measure_summary'] = measure.measure_summary.raw
+            row_data['biophysical_impacts'] = measure._nwrm_biophysical_impacts
+            row_data['ecosystem_services'] = measure._nwrm_ecosystem_services
+            row_data['policy_objectives'] = measure._nwrm_policy_objectives
 
-                if not row.xpath('./td/div'):
-                    continue
+            data.append(row_data)
 
-                row_data['benefit'] = row.xpath('./td/div')[0].text
-                row_data['level'] = row.xpath('./td/div')[1].text
-
-                data.append(row_data)
-
-        headers = ['title', 'url', 'level', 'benefit']
+        headers = ['title', 'url', 'code', 'sector', 'other_sector',
+                   'biophysical_impacts', 'ecosystem_services',
+                   'policy_objectives']
 
         # Create a workbook and add a worksheet.
         out = BytesIO()
@@ -68,9 +68,36 @@ class ExportMeasuresXls(BrowserView):
 
         for row in data:
             for index, header in enumerate(headers):
-                worksheet.write(row_index, index, row.get(header, ''))
+                worksheet.write(row_index, index, str(row.get(header, '')))
 
             row_index += 1
+
+        # worksheet benefits
+        headers_benefits = ['title', 'url', 'code', 'name', 'level', 'type']
+        wtitle_benefits = 'Benefits'
+        worksheet_b = workbook.add_worksheet(wtitle_benefits[:30])
+
+        for i, title in enumerate(headers_benefits):
+            worksheet_b.write(0, i, title or '')
+
+        benefits_categories = ['biophysical_impacts', 'ecosystem_services',
+                   'policy_objectives']
+
+        row_index = 1
+        for row in data:
+            for category in benefits_categories:
+                cat_values = row[category]
+
+                for item in cat_values:
+                    code, name, level = item
+                    worksheet_b.write(row_index, 0, str(row.get('title', '')))
+                    worksheet_b.write(row_index, 1, str(row.get('url', '')))
+                    worksheet_b.write(row_index, 2, code)
+                    worksheet_b.write(row_index, 3, name)
+                    worksheet_b.write(row_index, 4, level)
+                    worksheet_b.write(row_index, 5, category)
+
+                    row_index += 1
 
         workbook.close()
         out.seek(0)
