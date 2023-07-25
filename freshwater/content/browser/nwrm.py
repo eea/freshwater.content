@@ -248,17 +248,23 @@ def extract_benefits(measure):
         ]
 
         if benefit_code.startswith('BP'):
-            biophysical_impacts.append((benefit_code, benefit_name, level))
+            biophysical_impacts.append(
+                {'code': benefit_code, 'name': benefit_name, 'level': level}
+            )
 
         if benefit_code.startswith('ES'):
-            ecosystem_services.append((benefit_code, benefit_name, level))
+            ecosystem_services.append(
+                {'code': benefit_code, 'name': benefit_name, 'level': level}
+            )
 
         if benefit_code.startswith('PO'):
-            policy_objectives.append((benefit_code, benefit_name, level))
+            policy_objectives.append(
+                {'code': benefit_code, 'name': benefit_name, 'level': level}
+            )
 
-    measure._nwrm_biophysical_impacts = biophysical_impacts
-    measure._nwrm_ecosystem_services = ecosystem_services
-    measure._nwrm_policy_objectives = policy_objectives
+    measure.biophysical_impacts = biophysical_impacts
+    measure.ecosystem_services = ecosystem_services
+    measure.policy_objectives = policy_objectives
 
     return
 
