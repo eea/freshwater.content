@@ -2,6 +2,7 @@
 
 import json
 import logging
+import lxml
 
 # from eea.climateadapt.translation.utils import translate_text
 from plone.api.portal import get_tool
@@ -43,12 +44,16 @@ class Items(BrowserView):
                 # "review_state": "published",
             }
         )
-
         for brain in brains:
             obj = brain.getObject()
             if not getattr(obj, "nwrm_geolocation", ""):
                 continue
-            long_description = ""
+
+            general_html = lxml.etree.fromstring(obj.general.raw)
+            long_description = general_html.cssselect(
+                'div .field--name-field-nwrm-cs-summary .field__item')
+            long_description = (
+                long_description and long_description[0].text or '')
             measures = []
 
             if obj.measures:
