@@ -49,11 +49,14 @@ class Items(BrowserView):
             if not getattr(obj, "nwrm_geolocation", ""):
                 continue
 
-            general_html = lxml.etree.fromstring(obj.general.raw)
-            long_description = general_html.cssselect(
-                'div .field--name-field-nwrm-cs-summary .field__item')
-            long_description = (
-                long_description[0].text if long_description else '')
+            if obj.general:
+                general_html = lxml.etree.fromstring(obj.general.raw)
+                long_description = general_html.cssselect(
+                    'div .field--name-field-nwrm-cs-summary .field__item')
+                long_description = (
+                    long_description[0].text if long_description else '')
+            else:
+                long_description = ''
             measures = []
 
             if obj.measures:
