@@ -53,7 +53,7 @@ class Items(BrowserView):
             long_description = general_html.cssselect(
                 'div .field--name-field-nwrm-cs-summary .field__item')
             long_description = (
-                long_description and long_description[0].text or '')
+                long_description[0].text if long_description else '')
             measures = []
 
             if obj.measures:
