@@ -4,7 +4,6 @@ import logging
 import time
 
 import lxml
-import requests
 
 # import traceback
 import transaction
