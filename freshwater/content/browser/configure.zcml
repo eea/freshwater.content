@@ -39,6 +39,13 @@
       />
 
   <browser:page
+      name="check-measures-image-source"
+      for="*"
+      class=".nwrm.CheckImageSource"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
     for="*"
     name="topdb"
     class=".utils.ToPDB"
