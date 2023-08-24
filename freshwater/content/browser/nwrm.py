@@ -523,7 +523,7 @@ class CheckImageSource(BrowserView):
         portal_catalog = api.portal.get_tool("portal_catalog")
         images = portal_catalog.searchResults(
             portal_type="Image",
-            path={'query': '/Plone/nwrm/measures'})
+            path={'query': '/Plone/nwrm-imported/nwrm-measures-catalogue'})
 
         images = [x.getObject() for x in images]
 
