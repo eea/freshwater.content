@@ -492,3 +492,53 @@ class PossibleBenefitsExtractor(BrowserView):
         alsoProvides(self.request, IDisableCSRFProtection)
 
         return "Finished extraction for {} measures".format(len(measures))
+
+
+class CheckImageSource(BrowserView):
+    """ check if source is available """
+
+    counter = 0
+
+    def fix_image_source(self, image):
+        """ fix the source of the image """
+        img_src = image.description.replace('Source: ', '')
+
+        if not img_src.startswith("http"):
+            return
+
+        try:
+            req = requests.get(img_src, timeout=10)
+        except requests.exceptions.ConnectionError:
+            image.description = 'Source: Not available'
+            self.counter += 1
+            return
+
+        if req.status_code in (404, ):
+            image.description = 'Source: Not available'
+            self.counter += 1
+
+        return
+
+    def __call__(self):
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        images = portal_catalog.searchResults(
+            portal_type="Image",
+            path={'query': '/Plone/nwrm/measures'})
+
+        images = [x.getObject() for x in images]
+
+        for indx, image in enumerate(images):
+            if not image.description.startswith("Source: "):
+                img_desc = image.description
+                img_desc = img_desc.replace("Source:\xa0", "Source: ")
+                img_desc = img_desc.replace("Source:", "Source: ")
+                image.description = img_desc
+                image.reindexObject()
+
+            logger.info("Fixing image %s of %s ", indx + 1, len(images))
+            self.fix_image_source(image)
+            image.reindexObject()
+
+        alsoProvides(self.request, IDisableCSRFProtection)
+
+        return "Checked {} images. Fixed {}".format(len(images), self.counter)
