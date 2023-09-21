@@ -40,8 +40,8 @@ setup(
         'setuptools',
         'eea.restapi',
         'collective.bookmarks'
-    # -*- Extra requirements: -*-
     ],
+    # -*- Extra requirements: -*-
     extras_require={
         'test': [
             'plone.app.testing',
