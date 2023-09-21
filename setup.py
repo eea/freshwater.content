@@ -36,13 +36,12 @@ setup(
     namespace_packages=['freshwater'],
     include_package_data=True,
     zip_safe=False,
-        python_requires="==2.7",
-        install_requires=[
-            'setuptools',
-            'eea.restapi',
-            'collective.bookmarks'
-        # -*- Extra requirements: -*-
+    install_requires=[
+        'setuptools',
+        'eea.restapi',
+        'collective.bookmarks'
     ],
+    # -*- Extra requirements: -*-
     extras_require={
         'test': [
             'plone.app.testing',
