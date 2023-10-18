@@ -60,4 +60,13 @@
     handler=".to15.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Fix conditionalDataBlock and plotly provider_url"
+    description="Remove /freshwaternew from provider_url for conditionalDataBlock and plotly_charts"
+    profile="freshwater.content:default"
+    source="*"
+    destination="16"
+    handler=".to16.run_upgrade"
+    />
+
 </configure>
