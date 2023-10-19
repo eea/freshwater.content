@@ -1,12 +1,9 @@
-''' Upgrade to 15 '''
+''' Upgrade to 16 '''
 
 import logging
-from urllib.parse import urlparse
 from plone import api
 from freshwater.content.blocks import BlocksTraverser
 # pylint: disable = C0412
-from plone.restapi.serializer.utils import uid_to_url
-from plone.restapi.deserializer.utils import path2uid
 
 logger = logging.getLogger('eea.restapi.migration')
 
