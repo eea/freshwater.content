@@ -32,9 +32,9 @@ def clean_url(url):
 
 def clean_provider_url(provider_url):
     """clean_provider_url"""
-    provider_url = provider_url.replace('/freshwaternew', '')
-    provider_url = provider_url.replace('/freshwater-api', '')
-    provider_url = provider_url.replace('/freshwater', '')
+    provider_url = provider_url.replace('/freshwaternew', '/freshwater')
+    provider_url = provider_url.replace('/freshwater-api', '/freshwater')
+    # provider_url = provider_url.replace('/freshwater', '')
 
     return provider_url
 
