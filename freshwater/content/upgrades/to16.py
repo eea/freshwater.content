@@ -1,8 +1,12 @@
 ''' Upgrade to 16 '''
 
 import logging
+
 from plone import api
+from plone.restapi.deserializer.utils import path2uid
+
 from freshwater.content.blocks import BlocksTraverser
+
 # pylint: disable = C0412
 
 logger = logging.getLogger('eea.restapi.migration')
@@ -32,8 +36,9 @@ def clean_url(url):
 
 def clean_provider_url(provider_url):
     """clean_provider_url"""
-    provider_url = provider_url.replace('/freshwaternew', '/freshwater')
-    provider_url = provider_url.replace('/freshwater-api', '/freshwater')
+    provider_url = provider_url.replace('/freshwaternew', '/')
+    provider_url = provider_url.replace('/freshwater-api', '/')
+    provider_url = provider_url.replace('/freshwater/', '/')
     # provider_url = provider_url.replace('/freshwater', '')
 
     return provider_url
@@ -49,11 +54,15 @@ class ConditionalDataBlockTransformer(object):
         if (block or {}).get('@type') not in TYPES:
             return None
 
-        dirty = False
-        provider_url = block.get('provider_url', '')
+        def clean(url):
+            link = clean_provider_url(clean_url(url))
+            return path2uid(context=self.context, link=link)
 
+        dirty = False
+
+        provider_url = block.get('provider_url', '')
         if provider_url:
-            block['provider_url'] = clean_provider_url(provider_url)
+            block['provider_url'] = clean(provider_url)
             dirty = True
 
         return dirty
@@ -68,18 +77,27 @@ class PlotlyChartTransformer(object):
     def __call__(self, block):
         dirty = False
 
+        def clean(url):
+            link = clean_provider_url(clean_url(url))
+            return path2uid(context=self.context, link=link)
+
         if block.get('@type') == 'plotly_chart':
-            provider_url = block['visualization']['provider_url']
-            block['visualization']['provider_url'] = clean_provider_url(
-                provider_url)
+            if block['visualization'].get('provider_url'):
+                provider_url = block['visualization']['provider_url']
+                block['visualization']['provider_url'] = clean(provider_url)
+
+            if block['visualization'].get('chartData', {}).get('provider_url'):
+                chartData = block['visualization']['chartData']
+                provider_url = chartData['provider_url']
+                block['visualization']['chartData']['provider_url'] = clean(
+                    provider_url)
 
             logger.info('fixed plotly block: in %s', self.context)
             dirty = True
 
         if block.get('@type') == 'countryHeaderDataBlock':
             if block.get("provider_url") is not None:
-                block['provider_url'] = clean_provider_url(
-                    block['provider_url'])
+                block['provider_url'] = clean(block['provider_url'])
 
             dirty = True
 
