@@ -55,6 +55,7 @@ class ConditionalDataBlockTransformer(object):
             return None
 
         def clean(url):
+            """ clean """
             link = clean_provider_url(clean_url(url))
             return path2uid(context=self.context, link=link)
 
@@ -78,6 +79,7 @@ class PlotlyChartTransformer(object):
         dirty = False
 
         def clean(url):
+            """ clean """
             link = clean_provider_url(clean_url(url))
             return path2uid(context=self.context, link=link)
 
