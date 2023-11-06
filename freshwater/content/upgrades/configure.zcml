@@ -69,4 +69,13 @@
     handler=".to16.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Migrate Dashboards"
+    description="Migrate Dashboard content type to Tableau visualization"
+    profile="freshwater.content:default"
+    source="*"
+    destination="17"
+    handler=".to17.run_upgrade"
+    />
+
 </configure>
