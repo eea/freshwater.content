@@ -91,6 +91,16 @@
     marker=".interfaces.IReportDataTypes"
     />
 
+  <plone:behavior
+    name="freshwater.wise-metadata"
+    title="WISE metadata"
+    description="Adds WISE metadata fields"
+    factory=".behavior.WiseMetadata"
+    provides=".interfaces.IWiseMetadata"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".interfaces.IWiseMetadata"
+    />
+
   <genericsetup:registerProfile
     name="metadata_catalogue"
     title="Freshwater Metadata Catalogue"

@@ -3,8 +3,9 @@
 from plone.app.dexterity.behaviors.metadata import (DCFieldProperty,
                                                     MetadataBase)
 
-from .interfaces import (ICatalogueMetadata,  # , IExternalLinks
-                         IReportDataTypes)
+from .interfaces import (ICatalogueMetadata,
+                         IWiseMetadata,
+                         IReportDataTypes) # , IExternalLinks
 
 
 class CatalogueMetadata(MetadataBase):
@@ -37,3 +38,15 @@ class ReportDataTypes(MetadataBase):
     """Freshwater Report data types"""
 
     report_type = DCFieldProperty(IReportDataTypes["report_type"])
+
+
+class WiseMetadata(MetadataBase):
+    """WISE metadata"""
+
+    embed_url = DCFieldProperty(ICatalogueMetadata["embed_url"])
+    lineage = DCFieldProperty(IWiseMetadata["lineage"])
+    legislative_reference = DCFieldProperty(
+        IWiseMetadata["legislative_reference"])
+    dpsir_type = DCFieldProperty(IWiseMetadata["dpsir_type"])
+    category = DCFieldProperty(IWiseMetadata["category"])
+

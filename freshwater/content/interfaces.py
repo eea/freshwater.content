@@ -21,7 +21,7 @@ class IFreshwaterContentLayer(IDefaultBrowserLayer):
 
 @provider(IFormFieldProvider)
 class ICatalogueMetadata(model.Schema):
-    """Wise catalogue metadata
+    """Freshwater catalogue metadata
 
     Title   text    y
     Short description   Text    y
@@ -154,3 +154,53 @@ class IReportDataTypes(model.Schema):
         title=u"Report type",
         required=False, vocabulary="wise_report_vocabulary"
     )
+
+
+@provider(IFormFieldProvider)
+class IWiseMetadata(model.Schema):
+    """Wise catalogue metadata
+    """
+
+    model.fieldset(
+        "wise_metadata",
+        label=_("label_schema_default", default="WISE metadata"),
+        fields=[
+            "lineage",
+            "embed_url",
+            "dpsir_type",
+            "category",
+            "legislative_reference",
+        ],
+    )
+
+    embed_url = TextLine(
+        title=u"Tableau URL",
+        required=False,
+    )
+
+    lineage = Text(
+        title=u"Notes",
+        required=False,
+    )
+
+    dpsir_type = Choice(
+        title=u"DPSIR", required=False, vocabulary="wise_dpsir_vocabulary"
+    )
+
+    directives.widget("category", vocabulary="wise_category_vocabulary")
+    category = Tuple(
+        title=u"Sub-Theme",
+        required=False,
+        default=(),
+        value_type=TextLine(
+            title=u"Single topic",
+        ))
+
+    legislative_reference = Tuple(
+        title="Legislative reference",
+        required=False,
+        value_type=Choice(
+            title=u"Single legislative reference",
+            vocabulary="wise_legislative_vocabulary",
+        ))
+
