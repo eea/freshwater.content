@@ -3,7 +3,6 @@
 import logging
 from plone import api
 from plone.api import portal
-from freshwater.content.blocks import BlocksTraverser
 # pylint: disable = C0412
 import transaction
 from uuid import uuid4
@@ -39,10 +38,10 @@ def run_upgrade(setup_context):
 
     for brain in brains:
         obj = brain.getObject()
+        embed_url = obj.embed_url
 
-        if obj.embed_url is not None:
+        if embed_url is not None and '://tableau' in embed_url:
             parent = obj.aq_parent
-            embed_url = obj.embed_url
             eea_license = (
                 'EEA standard re-use policy: unless otherwise indicated, ' +
                 're-use of content on the EEA website for commercial or ' +
@@ -50,11 +49,10 @@ def run_upgrade(setup_context):
                 'provided that the source is acknowledged ' +
                 '(https://www.eea.europa.eu/legal/copyright)'
             )
-            tableau_url = embed_url.replace('//tableau.discomap', '//tableau-public.discomap')
+            tableau_url = embed_url.replace('://tableau.discomap', '://tableau-public.discomap')
             tableau_url = tableau_url.replace('/t/Wateronline', '')
             tableau_url = tableau_url.split('?')[0]
 
-            id = obj.id
             title = obj.title
             description = obj.description
             lineage = obj.lineage
@@ -78,24 +76,23 @@ def run_upgrade(setup_context):
             intids = getUtility(IIntIds)
             obj_id = intids.getId(obj)
             relation_catalog = getUtility(ICatalog)
-            rels = relation_catalog.findRelations({"to_id": obj_id, "from_attribute": 'relatedItems'})
-            for rel in rels:
+            rels = relation_catalog.findRelations({"to_id": obj_id})
+            for rel in list(rels):
                 relation_catalog.unindex(rel)
 
             try:
                 api.content.delete(obj=obj)
-            except Exception:
-                logger.error("Could not remove item:" + obj.absolute_url())
-                continue
+            except Exception as e:
+                print(f"Could not remove item {obj.absolute_url()}: {e}")
 
             item = api.content.create(
                 type='visualization_tableau',
                 title=title,
                 safe_id=True,
+                id=obj.id,
                 container=parent
             )
 
-            item.id = id
             item.description = description
             item.setCreators(creators)
             item.relatedItems = related_items
@@ -321,7 +318,9 @@ def run_upgrade(setup_context):
                     }
                 }]
             }
+            
+            obj_state = api.content.get_state(obj=obj)
+            if obj_state == 'published':
+                api.content.transition(obj=item, transition='publish')
+            transaction.commit()
 
-            api.content.transition(obj=item, transition='publish')
-            # transaction.commit()
-            # import pdb; pdb.set_trace()
