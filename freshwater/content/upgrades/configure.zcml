@@ -78,4 +78,13 @@
     handler=".to17.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Update blocks in Tableau visualization"
+    description="Update blocks in Tableau visualization"
+    profile="freshwater.content:default"
+    source="*"
+    destination="18"
+    handler=".to18.run_upgrade"
+    />
+
 </configure>
