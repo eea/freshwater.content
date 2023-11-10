@@ -4,4 +4,9 @@
   <index name="category" meta_type="FieldIndex">
     <indexed_attr value="category"/>
   </index>
+
+  <index name="dpsir_type" meta_type="FieldIndex">
+    <indexed_attr value="dpsir_type"/>
+  </index>
+
 </object>
