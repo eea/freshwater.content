@@ -1,4 +1,4 @@
-''' Upgrade to 16 '''
+''' Upgrade to 17 '''
 
 import logging
 from plone import api
@@ -27,6 +27,174 @@ def html_to_text(html):
     data = data.getData().strip()
 
     return data
+
+def migrate_content_to_metadata_blocks(item):
+    blocks = item.blocks
+    blocks_layout = item.blocks_layout['items']
+    first_group_block_id = blocks_layout[1]
+    second_group_block_id = blocks_layout[2]
+    
+    # add description
+    first_group_block = blocks[first_group_block_id]
+    description_block_id = first_group_block['data']['blocks_layout']['items'][0]
+    item.blocks[first_group_block_id]['data']['blocks'][description_block_id] = {
+        '@type': 'slate', 
+        'plaintext': item.description, 
+        'value': [{
+            'children': [{
+                'text': item.description
+            }], 
+            'type': 'callout'
+        }]
+    }
+
+    # add metadata values in tabs block
+    second_group_block = blocks[second_group_block_id]
+    tabs_block_id = second_group_block['data']['blocks_layout']['items'][0]
+    tabs_block = second_group_block['data']['blocks'][tabs_block_id]
+    tabs_blocks_layout = tabs_block['data']['blocks_layout']['items']
+
+    notes_tab_id = tabs_blocks_layout[0]
+    sources_tab_id = tabs_blocks_layout[1]
+    metadata_tab_id = tabs_blocks_layout[2]
+    more_info_tab_id = tabs_blocks_layout[3]
+
+    item_tabs_block = item.blocks[second_group_block_id]['data']['blocks'][tabs_block_id]
+    item_tabs = item_tabs_block['data']['blocks']
+
+    notes_tab = tabs_block['data']['blocks'][notes_tab_id]
+    notes_tab_meta_id = notes_tab['blocks_layout']['items'][0]
+    item_tabs[notes_tab_id]['blocks'][notes_tab_meta_id] = {
+        '@type': 'metadataSection', 
+        'variation': 'default',
+        'fields': [
+            {
+                "@id": make_uid(),
+                "field": {
+                    "id": "lineage",
+                    "title": "Notes",
+                    "widget": "textarea"
+                }
+            }
+        ]
+    }
+
+    sources_tab = tabs_block['data']['blocks'][sources_tab_id]
+    sources_tab_meta_id = sources_tab['blocks_layout']['items'][0]
+    item_tabs[sources_tab_id]['blocks'][sources_tab_meta_id] = {
+        '@type': 'metadataSection', 
+        'variation': 'default',
+        'fields': [{
+            "@id": make_uid(),
+            "field": {
+            "id": "data_provenance",
+            "title": "Add sources for the data used",
+            "widget": "data_provenance"
+            }
+        }]
+    }
+
+    more_info_tab = tabs_block['data']['blocks'][more_info_tab_id]
+    more_info_tab_meta_id = more_info_tab['blocks_layout']['items'][0]
+    item_tabs[more_info_tab_id]['blocks'][more_info_tab_meta_id] = {
+        '@type': 'metadataSection', 
+        'variation': 'default',
+        'fields': [{
+            "@id": make_uid(),
+            "field": {
+            "id": "embed_url",
+            "title": "Tableau URL",
+            "widget": "string"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+            "id": "dpsir_type",
+            "title": "DPSIR",
+            "widget": "choices"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+            "id": "legislative_reference",
+            "title": "Legislative reference",
+            "widget": "array"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+            "id": "category",
+            "title": "Sub-Theme",
+            "widget": "array"
+            },
+            "showLabel": True
+        }]
+    }
+
+    meta_tab = tabs_block['data']['blocks'][metadata_tab_id]
+    meta_tab_metadata_id = meta_tab['blocks_layout']['items'][0]
+    item_tabs[metadata_tab_id]['blocks'][meta_tab_metadata_id] = {
+        '@type': 'metadataSection', 
+        'variation': 'default',
+        'fields':[{
+            "@id": make_uid(),
+            "field": {
+                "id": "topics",
+                "title": "Topics",
+                "widget": "array"
+            }
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+                "id": "geo_coverage",
+                "title": "Geographical coverage",
+                "widget": "geolocation"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+                "id": "temporal_coverage",
+                "title": "Temporal coverage",
+                "widget": "temporal"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+                "id": "publisher",
+                "title": "Publisher",
+                "widget": "array"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+                "id": "rights",
+                "title": "Rights",
+                "widget": "textarea"
+            },
+            "showLabel": True
+        },
+        {
+            "@id": make_uid(),
+            "field": {
+                "id": "other_organisations",
+                "title": "Other organisations involved",
+                "widget": "array"
+            }
+        }]
+    }
 
 def run_upgrade(setup_context):
     """ Run upgrade to 17
@@ -151,174 +319,8 @@ def run_upgrade(setup_context):
                     'data': sources
                 }
 
-            blocks = item.blocks
-            blocks_layout = item.blocks_layout['items']
-            first_group_block_id = blocks_layout[1]
-            second_group_block_id = blocks_layout[2]
-            
-            # add description
-            first_group_block = blocks[first_group_block_id]
-            description_block_id = first_group_block['data']['blocks_layout']['items'][0]
-            item.blocks[first_group_block_id]['data']['blocks'][description_block_id] = {
-                '@type': 'slate', 
-                'plaintext': description, 
-                'value': [{
-                    'children': [{
-                        'text': description
-                    }], 
-                    'type': 'callout'
-                }]
-            }
+            migrate_content_to_metadata_blocks(item)
 
-            # add metadata values in tabs block
-            second_group_block = blocks[second_group_block_id]
-            tabs_block_id = second_group_block['data']['blocks_layout']['items'][0]
-            tabs_block = second_group_block['data']['blocks'][tabs_block_id]
-            tabs_blocks_layout = tabs_block['data']['blocks_layout']['items']
-
-            notes_tab_id = tabs_blocks_layout[0]
-            sources_tab_id = tabs_blocks_layout[1]
-            metadata_tab_id = tabs_blocks_layout[2]
-            more_info_tab_id = tabs_blocks_layout[3]
-
-            item_tabs_block = item.blocks[second_group_block_id]['data']['blocks'][tabs_block_id]
-            item_tabs = item_tabs_block['data']['blocks']
-
-            notes_tab = tabs_block['data']['blocks'][notes_tab_id]
-            notes_tab_meta_id = notes_tab['blocks_layout']['items'][0]
-            item_tabs[notes_tab_id]['blocks'][notes_tab_meta_id] = {
-                '@type': 'metadataSection', 
-                'variation': 'default',
-                'fields': [
-                    {
-                        "@id": make_uid(),
-                        "field": {
-                            "id": "lineage",
-                            "title": "Notes",
-                            "widget": "textarea"
-                        }
-                    }
-                ]
-            }
-
-            sources_tab = tabs_block['data']['blocks'][sources_tab_id]
-            sources_tab_meta_id = sources_tab['blocks_layout']['items'][0]
-            item_tabs[sources_tab_id]['blocks'][sources_tab_meta_id] = {
-                '@type': 'metadataSection', 
-                'variation': 'default',
-                'fields': [{
-                    "@id": make_uid(),
-                    "field": {
-                    "id": "data_provenance",
-                    "title": "Add sources for the data used",
-                    "widget": "data_provenance"
-                    }
-                }]
-            }
-
-            more_info_tab = tabs_block['data']['blocks'][more_info_tab_id]
-            more_info_tab_meta_id = more_info_tab['blocks_layout']['items'][0]
-            item_tabs[more_info_tab_id]['blocks'][more_info_tab_meta_id] = {
-                '@type': 'metadataSection', 
-                'variation': 'default',
-                'fields': [{
-                    "@id": make_uid(),
-                    "field": {
-                    "id": "embed_url",
-                    "title": "Tableau URL",
-                    "widget": "string"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                    "id": "dpsir_type",
-                    "title": "DPSIR",
-                    "widget": "choices"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                    "id": "legislative_reference",
-                    "title": "Legislative reference",
-                    "widget": "array"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                    "id": "category",
-                    "title": "Sub-Theme",
-                    "widget": "array"
-                    },
-                    "showLabel": True
-                }]
-            }
-
-
-            meta_tab = tabs_block['data']['blocks'][metadata_tab_id]
-            meta_tab_metadata_id = meta_tab['blocks_layout']['items'][0]
-            item_tabs[metadata_tab_id]['blocks'][meta_tab_metadata_id] = {
-                '@type': 'metadataSection', 
-                'variation': 'default',
-                'fields':[{
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "topics",
-                        "title": "Topics",
-                        "widget": "array"
-                    }
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "geo_coverage",
-                        "title": "Geographical coverage",
-                        "widget": "geolocation"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "temporal_coverage",
-                        "title": "Temporal coverage",
-                        "widget": "temporal"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "publisher",
-                        "title": "Publisher",
-                        "widget": "array"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "rights",
-                        "title": "Rights",
-                        "widget": "textarea"
-                    },
-                    "showLabel": True
-                },
-                {
-                    "@id": make_uid(),
-                    "field": {
-                        "id": "other_organisations",
-                        "title": "Other organisations involved",
-                        "widget": "array"
-                    }
-                }]
-            }
-            
             obj_state = api.content.get_state(obj=obj)
             if obj_state == 'published':
                 api.content.transition(obj=item, transition='publish')
