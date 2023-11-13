@@ -169,6 +169,9 @@ def run_upgrade(context):
 
         if obj.lineage is None:
             obj.lineage = 'No data'
+        
+        if obj.rights is None or obj.rights == '':
+            obj.rights = 'No data'
 
         update_blocks(obj)
         obj.reindexObject()
