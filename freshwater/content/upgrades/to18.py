@@ -49,13 +49,16 @@ def update_blocks(obj):
         item_tabs[metadata_tab_id]['blocks'][meta_tab_metadata_id] = {
             '@type': 'metadataSection', 
             'variation': 'default',
-            'fields':[{
+            'fields':[
+            {
                 "@id": make_uid(),
                 "field": {
                     "id": "topics",
                     "title": "Topics",
                     "widget": "array"
-                }
+                },
+                "showLabel": True,
+                "hideInView": True
             },
             {
                 "@id": make_uid(),
@@ -99,7 +102,9 @@ def update_blocks(obj):
                     "id": "other_organisations",
                     "title": "Other organisations involved",
                     "widget": "array"
-                }
+                },
+                "showLabel": True,
+                "hideInView": True
             },
             {
                 "@id": make_uid(),
@@ -130,6 +135,22 @@ def update_blocks(obj):
             }]
         }
 
+    def hide_in_view(type):
+        metadata_fields = item_tabs[metadata_tab_id]['blocks'][meta_tab_metadata_id]['fields']
+        field = [k for k in metadata_fields if k['field']['id'] == type]
+        field[0]['hideInView'] = True
+        
+    if not obj.legislative_reference:
+        hide_in_view("legislative_reference")
+    
+    if not obj.category:
+        hide_in_view("category")
+    
+    if not obj.dpsir_type:
+        hide_in_view("dpsir_type")
+
+
+
 def run_upgrade(context):
     """ Run upgrade to 18
         Update blocks in Tableau visualization
@@ -139,11 +160,15 @@ def run_upgrade(context):
     brains = catalog.unrestrictedSearchResults(portal_type='visualization_tableau')
 
     for brain in brains:
-
         obj = brain.getObject()
         obj.tableau_visualization["hideToolbar"] = True
         obj.tableau_visualization["hideTabs"] = True
 
-        update_blocks(obj)
+        if type(obj.legislative_reference) == str:
+            obj.legislative_reference = tuple([obj.legislative_reference])
 
+        if obj.lineage is None:
+            obj.lineage = 'No data'
+
+        update_blocks(obj)
         obj.reindexObject()

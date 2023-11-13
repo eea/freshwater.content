@@ -166,17 +166,17 @@ class IWiseMetadata(model.Schema):
         label=_("label_schema_default", default="WISE metadata"),
         fields=[
             "lineage",
-            "embed_url",
+            # "embed_url",
             "dpsir_type",
             "category",
             "legislative_reference",
         ],
     )
 
-    embed_url = TextLine(
-        title=u"Tableau URL",
-        required=False,
-    )
+    # embed_url = TextLine(
+    #     title=u"Tableau URL",
+    #     required=False,
+    # )
 
     lineage = Text(
         title=u"Notes",

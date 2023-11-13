@@ -43,7 +43,7 @@ class ReportDataTypes(MetadataBase):
 class WiseMetadata(MetadataBase):
     """WISE metadata"""
 
-    embed_url = DCFieldProperty(ICatalogueMetadata["embed_url"])
+    # embed_url = DCFieldProperty(ICatalogueMetadata["embed_url"])
     lineage = DCFieldProperty(IWiseMetadata["lineage"])
     legislative_reference = DCFieldProperty(
         IWiseMetadata["legislative_reference"])
