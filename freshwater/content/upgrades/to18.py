@@ -27,6 +27,7 @@ def update_blocks(obj):
     second_group_block = blocks[second_group_block_id]
     tabs_block_id = second_group_block['data']['blocks_layout']['items'][0]
     tabs_block = second_group_block['data']['blocks'][tabs_block_id]
+    tabs_blocks_layout = tabs_block['data']['blocks_layout']['items']
 
     metadata_tab_id = get_block_id(tabs_block['data']['blocks'], 'Metadata')
     more_info_tab_id = get_block_id(tabs_block['data']['blocks'], 'More info')
@@ -36,12 +37,17 @@ def update_blocks(obj):
 
     if more_info_tab_id:
         more_info_tab = tabs_block['data']['blocks'][more_info_tab_id]
-        more_info_tab_meta_id = more_info_tab['blocks_layout']['items'][0]
+        more_info_tab_items = more_info_tab['blocks_layout']['items']
+        more_info_tab_meta_id = more_info_tab_items[0]
         item_tabs[more_info_tab_id]['blocks'][more_info_tab_meta_id] = {
             '@type': 'metadataSection', 
             'variation': 'default',
             'fields': []
         }
+        more_info_tab_index = tabs_blocks_layout.index(more_info_tab_id)
+        tabs_blocks_layout.pop(more_info_tab_index)
+        tabs_block['data']['blocks'].pop(more_info_tab_id)
+
 
     if metadata_tab_id:
         meta_tab = tabs_block['data']['blocks'][metadata_tab_id]
