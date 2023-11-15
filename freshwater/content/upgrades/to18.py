@@ -3,7 +3,6 @@
 import logging
 from plone import api
 from uuid import uuid4
-from Products.CMFCore.utils import getToolByName
 # pylint: disable = C0412
 
 logger = logging.getLogger('eea.restapi.migration')

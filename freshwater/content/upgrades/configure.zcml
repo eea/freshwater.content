@@ -87,4 +87,13 @@
     handler=".to18.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Set autoscale on Tableau visualization"
+    description="Set autoscale on Tableau visualization"
+    profile="freshwater.content:default"
+    source="*"
+    destination="19"
+    handler=".to19.run_upgrade"
+    />
+
 </configure>
