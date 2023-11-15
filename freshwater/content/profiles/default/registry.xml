@@ -57,6 +57,14 @@
     <value key="vocabulary">wise_countries_complete_vocabulary</value>
   </records>
 
+  <records interface="plone.app.querystring.interfaces.IQueryField"
+    prefix="plone.app.querystring.field.taxonomy_eeatopicstaxonomy" remove="true">
+  </records>
+
+  <records interface="plone.app.querystring.interfaces.IQueryField"
+    prefix="plone.app.querystring.field.taxonomy_eeapublishertaxonomy" remove="true">
+  </records>
+
   <record name="plone.allowed_sizes" interface="plone.app.imaging.interfaces.IImagingSchema" field="allowed_sizes">
     <field type="plone.registry.field.List">
       <description>Specify all allowed maximum image dimensions, one per line. The required format is &lt;name&gt; &lt;width&gt;:&lt;height&gt;.</description>
