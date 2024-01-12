@@ -148,5 +148,10 @@
       name="wise_countries_complete_vocabulary"
       component=".vocabulary.countries_complete_vocabulary"
       />
+  
+  <adapter
+      factory=".catalog.block_types"
+      name="block_types"
+      />
 
 </configure>
