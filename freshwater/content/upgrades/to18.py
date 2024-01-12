@@ -167,7 +167,9 @@ def run_upgrade(context):
     """
 
     catalog = api.portal.get_tool("portal_catalog")
-    brains = catalog.unrestrictedSearchResults(portal_type="visualization_tableau")
+    brains = catalog.unrestrictedSearchResults(
+        portal_type="visualization_tableau"
+    )
 
     for brain in brains:
         obj = brain.getObject()
