@@ -37,11 +37,16 @@ def migrate_content_to_metadata_blocks(item):
 
     # add description
     first_group_block = blocks[first_group_block_id]
-    description_block_id = first_group_block["data"]["blocks_layout"]["items"][0]
-    item.blocks[first_group_block_id]["data"]["blocks"][description_block_id] = {
+    desc_block_id = first_group_block["data"]["blocks_layout"]["items"][0]
+    item.blocks[first_group_block_id]["data"]["blocks"][desc_block_id] = {
         "@type": "slate",
         "plaintext": item.description,
-        "value": [{"children": [{"text": item.description}], "type": "callout"}],
+        "value": [{
+            "children": [{
+                "text": item.description
+            }],
+            "type": "callout"
+        }],
     }
 
     # add metadata values in tabs block
@@ -55,9 +60,8 @@ def migrate_content_to_metadata_blocks(item):
     metadata_tab_id = tabs_blocks_layout[2]
     more_info_tab_id = tabs_blocks_layout[3]
 
-    item_tabs_block = item.blocks[second_group_block_id]["data"]["blocks"][
-        tabs_block_id
-    ]
+    second_block = item.blocks[second_group_block_id]
+    item_tabs_block = second_block["data"]["blocks"][tabs_block_id]
     item_tabs = item_tabs_block["data"]["blocks"]
 
     notes_tab = tabs_block["data"]["blocks"][notes_tab_id]
@@ -217,11 +221,11 @@ def run_upgrade(setup_context):
         if embed_url is not None and "://tableau" in embed_url:
             parent = obj.aq_parent
             eea_license = (
-                "EEA standard re-use policy: unless otherwise indicated, "
-                + "re-use of content on the EEA website for commercial or "
-                + "non-commercial purposes is permitted free of charge, "
-                + "provided that the source is acknowledged "
-                + "(https://www.eea.europa.eu/legal/copyright)"
+                "EEA standard re-use policy: unless otherwise indicated, " +
+                "re-use of content on the EEA website for commercial or " +
+                "non-commercial purposes is permitted free of charge, " +
+                "provided that the source is acknowledged " +
+                "(https://www.eea.europa.eu/legal/copyright)"
             )
             tableau_url = embed_url.replace(
                 "://tableau.discomap", "://tableau-public.discomap"
