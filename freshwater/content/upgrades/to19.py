@@ -1,6 +1,5 @@
 ''' Upgrade to 19 '''
 
-import logging
 from plone import api
 
 # pylint: disable = C0412

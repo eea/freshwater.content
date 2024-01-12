@@ -1,28 +1,27 @@
 ''' Upgrade to 18 '''
 
-import logging
-from plone import api
 from uuid import uuid4
+from plone import api
 
 # pylint: disable = C0412
 
-logger = logging.getLogger("eea.restapi.migration")
-
 
 def make_uid():
+    """Block id"""
     return str(uuid4())
 
 
-def get_block_id(blocks, type):
-    block = {k for k, v in blocks.items() if v["title"] == type}
+def get_block_id(blocks, title):
+    """Return block id"""
+    block = {k for k, v in blocks.items() if v["title"] == title}
     if block:
         block_id = list(block)[0]
         return block_id
-    else:
-        return None
+    return None
 
 
 def update_blocks(obj):
+    """Update metadata blocks"""
     blocks = obj.blocks
     blocks_layout = obj.blocks_layout["items"]
     second_group_block_id = blocks_layout[2]
@@ -145,10 +144,11 @@ def update_blocks(obj):
             ],
         }
 
-    def hide_in_view(type):
+    def hide_in_view(field):
+        '''Hide blocks on view'''
         m_blocks = item_tabs[metadata_tab_id]["blocks"]
         m_fields = m_blocks[meta_tab_metadata_id]["fields"]
-        field = [k for k in m_fields if k["field"]["id"] == type]
+        field = [k for k in m_fields if k["field"]["id"] == field]
         field[0]["hideInView"] = True
 
     if not obj.legislative_reference:
@@ -176,7 +176,7 @@ def run_upgrade(context):
         obj.tableau_visualization["hideToolbar"] = True
         obj.tableau_visualization["hideTabs"] = True
 
-        if type(obj.legislative_reference) == str:
+        if isinstance(obj.legislative_reference, str):
             obj.legislative_reference = tuple([obj.legislative_reference])
 
         if obj.lineage is None:

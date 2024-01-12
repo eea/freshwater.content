@@ -1,6 +1,5 @@
 ''' Upgrade to 17 '''
 
-import logging
 from plone import api
 from plone.api import portal
 
@@ -10,9 +9,6 @@ from uuid import uuid4
 from zope.component import getUtility
 from zc.relation.interfaces import ICatalog
 from zope.intid.interfaces import IIntIds
-
-
-logger = logging.getLogger("ContentMigrate")
 
 
 def make_uid():
