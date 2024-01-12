@@ -35,7 +35,8 @@ def update_blocks(obj):
     metadata_tab_id = get_block_id(tabs_block["data"]["blocks"], "Metadata")
     more_info_tab_id = get_block_id(tabs_block["data"]["blocks"], "More info")
 
-    item_tabs_block = obj.blocks[second_group_block_id]["data"]["blocks"][tabs_block_id]
+    second_block = obj.blocks[second_group_block_id]
+    item_tabs_block = second_block["data"]["blocks"][tabs_block_id]
     item_tabs = item_tabs_block["data"]["blocks"]
 
     if more_info_tab_id:
@@ -60,7 +61,11 @@ def update_blocks(obj):
             "fields": [
                 {
                     "@id": make_uid(),
-                    "field": {"id": "topics", "title": "Topics", "widget": "array"},
+                    "field": {
+                        "id": "topics",
+                        "title": "Topics",
+                        "widget": "array"
+                    },
                     "showLabel": True,
                     "hideInView": True,
                 },
@@ -93,7 +98,11 @@ def update_blocks(obj):
                 },
                 {
                     "@id": make_uid(),
-                    "field": {"id": "rights", "title": "Rights", "widget": "textarea"},
+                    "field": {
+                        "id": "rights",
+                        "title": "Rights",
+                        "widget": "textarea"
+                    },
                     "showLabel": True,
                 },
                 {
@@ -137,10 +146,9 @@ def update_blocks(obj):
         }
 
     def hide_in_view(type):
-        metadata_fields = item_tabs[metadata_tab_id]["blocks"][meta_tab_metadata_id][
-            "fields"
-        ]
-        field = [k for k in metadata_fields if k["field"]["id"] == type]
+        m_blocks = item_tabs[metadata_tab_id]["blocks"]
+        m_fields = m_blocks[meta_tab_metadata_id]["fields"]
+        field = [k for k in m_fields if k["field"]["id"] == type]
         field[0]["hideInView"] = True
 
     if not obj.legislative_reference:
