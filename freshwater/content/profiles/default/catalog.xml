@@ -9,4 +9,8 @@
     <indexed_attr value="dpsir_type"/>
   </index>
 
+  <index name="block_types" meta_type="KeywordIndex">
+    <indexed_attr value="block_types"/>
+  </index>
+
 </object>
