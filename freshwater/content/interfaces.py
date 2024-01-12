@@ -203,4 +203,3 @@ class IWiseMetadata(model.Schema):
             title=u"Single legislative reference",
             vocabulary="wise_legislative_vocabulary",
         ))
-
