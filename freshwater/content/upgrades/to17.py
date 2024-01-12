@@ -258,8 +258,8 @@ def run_upgrade(setup_context):
 
             try:
                 api.content.delete(obj=obj)
-            except Exception as e:
-                print(f"Could not remove item {obj.absolute_url()}: {e}")
+            except Exception:
+                print("Could not remove item", obj.absolute_url())
 
             item = api.content.create(
                 type="visualization_tableau",
