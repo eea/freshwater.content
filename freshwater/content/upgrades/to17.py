@@ -1,21 +1,23 @@
 ''' Upgrade to 17 '''
 
+from uuid import uuid4
 from plone import api
 from plone.api import portal
 
 # pylint: disable = C0412
 import transaction
-from uuid import uuid4
 from zope.component import getUtility
 from zc.relation.interfaces import ICatalog
 from zope.intid.interfaces import IIntIds
 
 
 def make_uid():
+    """Block id"""
     return str(uuid4())
 
 
 def html_to_text(html):
+    """Convert html to text"""
     portal_transform = portal.get_tool(name="portal_transforms")
 
     data = portal_transform.convertTo("text/plain", html, mimetype="text/html")
@@ -26,6 +28,7 @@ def html_to_text(html):
 
 
 def migrate_content_to_metadata_blocks(item):
+    """Migrate content to metadata blocks"""
     blocks = item.blocks
     blocks_layout = item.blocks_layout["items"]
     first_group_block_id = blocks_layout[1]
@@ -301,7 +304,7 @@ def run_upgrade(setup_context):
             else:
                 item.rights = license_copyright
 
-            if original_source is not None or len(data_source_info) != 0:
+            if original_source is not None or data_source_info:
                 sources = []
                 if original_source:
                     data = {
@@ -312,7 +315,7 @@ def run_upgrade(setup_context):
                     }
                     sources.append(data)
 
-                if len(data_source_info) > 0:
+                if data_source_info:
                     data = {
                         "@id": make_uid(),
                         "link": data_source_info,
