@@ -3,6 +3,8 @@ Changelog
 
 3.1-dev0 - (unreleased)
 ---------------------------
+* Change: override voltobackendwarning template
+  [olimpiurob - refs #261847]
 
 3.0 - (2023-10-20)
 ---------------------------
