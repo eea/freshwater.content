@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.3 - (2024-01-23)
+---------------------------
+* Change: override voltobackendwarning template
+  [olimpiurob - refs #261847]
+
 3.2 - (2024-01-22)
 ---------------------------
 * Change: Back to devel
