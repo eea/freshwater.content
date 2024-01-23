@@ -2,8 +2,7 @@
 """
 
 from Acquisition import aq_parent
-from plone.uuid.interfaces import IUUID
-from plone.uuid.interfaces import IUUIDAware
+from plone.uuid.interfaces import IUUID, IUUIDAware
 from zope.component import getMultiAdapter
 from zope.i18nmessageid.message import MessageFactory
 from plone.restapi.deserializer import utils
@@ -16,9 +15,13 @@ def initialize(context):
     """Initializer called when used as a Zope 2 product.
     """
 
+
 def path2uid(context, link):
-    # unrestrictedTraverse requires a string on py3. see:
-    # https://github.com/zopefoundation/Zope/issues/674
+    """ Remove /freshwater/ from the path if it is present
+
+        unrestrictedTraverse requires a string on py3. see:
+        https://github.com/zopefoundation/Zope/issues/674
+    """
     if not link:
         return ""
 
@@ -34,7 +37,7 @@ def path2uid(context, link):
     context_url = context.absolute_url()
     relative_up = len(context_url.split("/")) - len(portal_url.split("/"))
     if path.startswith(portal_url):
-        path = path[len(portal_url) + 1 :]
+        path = path[len(portal_url) + 1:]
     if not path.startswith(portal_path):
         path = "{portal_path}/{path}".format(
             portal_path=portal_path, path=path.lstrip("/")
@@ -47,10 +50,10 @@ def path2uid(context, link):
     else:
         suffix = ""
     obj = portal.unrestrictedTraverse(path, None)
-    
+
     if obj is None or obj == portal:
         return link
-    
+
     segments = path.split("/")
     while not IUUIDAware.providedBy(obj):
         obj = aq_parent(obj)
