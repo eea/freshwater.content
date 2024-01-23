@@ -2,10 +2,10 @@
 """
 
 from Acquisition import aq_parent
+from plone.restapi.deserializer import utils
 from plone.uuid.interfaces import IUUID, IUUIDAware
 from zope.component import getMultiAdapter
 from zope.i18nmessageid.message import MessageFactory
-from plone.restapi.deserializer import utils
 
 
 EEAMessageFactory = MessageFactory('eea')
