@@ -96,4 +96,13 @@
     handler=".to19.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Update measure content type fields data"
+    description="ecosystem_services, biophysical_impacts, policy_objectives"
+    profile="freshwater.content:default"
+    source="*"
+    destination="20"
+    handler=".to20.run_upgrade"
+    />
+
 </configure>
