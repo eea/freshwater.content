@@ -1,9 +1,8 @@
 ''' Upgrade to 20 '''
 
 from plone import api
-from bs4 import BeautifulSoup
 from plone.app.textfield.value import RichTextValue
-
+from bs4 import BeautifulSoup
 # pylint: disable = C0412
 
 
