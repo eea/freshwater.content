@@ -26,7 +26,8 @@ def run_upgrade(context):
         if soup_summary.findChild().name == 'div':
             childs = soup_summary.findChild().findChildren()
             text = "".join(str(c) for c in childs)
-            rich_text_value = RichTextValue(text or '', 'text/html', 'text/html')
+            rich_text_value = RichTextValue(
+                text or '', 'text/html', 'text/html')
             obj.measure_summary = rich_text_value
 
         fields = ['ecosystem_services',
@@ -44,7 +45,7 @@ def run_upgrade(context):
             items = getattr(obj, field_name)
 
             for item in items:
-                item["name"] = f"{item['code']} - {item['name']}"
+                item["name"] = "{} - {}".format(item['code'], item['name'])
 
             setattr(
                 obj, field_name, {"value": list(getattr(obj, field_name, []))})
