@@ -202,7 +202,6 @@ class IWiseMetadata(model.Schema):
         required=False,
         default=(),
         missing_value=None,
-        value_type=Choice(
-            title=u"Single legislative reference",
-            vocabulary="wise_legislative_vocabulary",
+        value_type=TextLine(
+            title=u"Single topic",
         ))
