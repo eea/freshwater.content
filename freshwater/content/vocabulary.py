@@ -165,23 +165,23 @@ def report_vocabulary(context):
     return values_to_vocab(report_type)
 
 
-legislative_reference = [
-    "Water Framework Directive",
-    "Floods Directive",
-    "Bathing Water Directive",
-    "Nitrates Directive",
-    "Urban Waste Water Treatment Directive",
-    "Drinking Water Directive",
-    "Marine Strategy Framework Directive",
-    "Habitats Directive",
-    "Birds Directive",
-]
+# legislative_reference = [
+#     "Water Framework Directive",
+#     "Floods Directive",
+#     "Bathing Water Directive",
+#     "Nitrates Directive",
+#     "Urban Waste Water Treatment Directive",
+#     "Drinking Water Directive",
+#     "Marine Strategy Framework Directive",
+#     "Habitats Directive",
+#     "Birds Directive",
+# ]
 
 
-@provider(IVocabularyFactory)
-def legislative_vocabulary(context):
-    """legislative_vocabulary"""
-    return values_to_vocab(legislative_reference)
+# @provider(IVocabularyFactory)
+# def legislative_vocabulary(context):
+#     """legislative_vocabulary"""
+#     return values_to_vocab(legislative_reference)
 
 
 # category = [
@@ -203,12 +203,8 @@ class KeywordsVocabulary(BKV):
     def __init__(self, index):
         self.keyword_index = index
 
-    # def __call__(self, *args, **kwargs):
-    #     return super(KeywordsVocabulary, self).__call__(*args, **kwargs)
-
-
 CategoryVocabularyFactory = KeywordsVocabulary("category")
-
+LegislativeReferenceVocabularyFactory = KeywordsVocabulary("legislation")
 
 themes = [
     "Climate change",

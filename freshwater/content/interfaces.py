@@ -196,10 +196,13 @@ class IWiseMetadata(model.Schema):
             title=u"Single topic",
         ))
 
+    directives.widget("legislative_reference",
+                      vocabulary="wise_legislative_vocabulary")
     legislative_reference = Tuple(
         title="Legislative reference",
         required=False,
-        value_type=Choice(
-            title=u"Single legislative reference",
-            vocabulary="wise_legislative_vocabulary",
+        default=(),
+        missing_value=None,
+        value_type=TextLine(
+            title=u"Single topic",
         ))

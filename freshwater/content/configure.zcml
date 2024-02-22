@@ -126,7 +126,7 @@
 
   <utility
       name="wise_legislative_vocabulary"
-      component=".vocabulary.legislative_vocabulary"
+      component=".vocabulary.LegislativeReferenceVocabularyFactory"
       />
 
   <utility
