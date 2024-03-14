@@ -1,5 +1,8 @@
 """ overrides.py """
 
+import logging
+import requests
+
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone import api
@@ -14,8 +17,6 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import implementer
 
-import logging
-import requests
 from mo_sql_parsing import format as sql_format
 from eea.api.dataconnector.queryparser import parseQuery
 from eea.api.dataconnector.queryfilter import filteredData
@@ -71,6 +72,7 @@ def _get_data(self):
         "results": filteredData(data["results"], data_query),
         "metadata": metadata,
     }
+
 
 def get_url(item):
     """get_url"""
