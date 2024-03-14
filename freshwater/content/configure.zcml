@@ -22,6 +22,13 @@
   <!--   replacement=".api.breadcrumbscall" -->
   <!--   /> -->
 
+  <monkey:patch
+    description="Parsing sql query with PIVOT keyword gives an error"
+    class="eea.api.dataconnector.adapter.DataProviderForConnectors"
+    original="_get_data"
+    replacement=".overrides._get_data"
+    />
+
   <browser:page
     for="*"
     name="breadcrumbs_view"

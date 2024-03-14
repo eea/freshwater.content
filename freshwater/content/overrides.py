@@ -1,5 +1,8 @@
 """ overrides.py """
 
+import logging
+import requests
+
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone import api
@@ -13,6 +16,62 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import implementer
+
+from mo_sql_parsing import format as sql_format
+from eea.api.dataconnector.queryparser import parseQuery
+from eea.api.dataconnector.queryfilter import filteredData
+
+logger = logging.getLogger(__name__)
+
+
+def _get_data(self):
+    """_get_data."""
+    data = {}
+    metadata = self._get_metadata()
+    sql = parseQuery(self.context, self.request)
+
+    if not sql:
+        return {"results": [], "metadata": metadata}
+
+    conditions = sql.get("conditions")
+    data_query = sql.get("data_query")
+    form = sql.get("form")
+    query = sql.get("query")
+
+    if "where" in query and conditions:
+        query["where"] = {"and": conditions + [query["where"]]}
+    elif "where" not in query and len(conditions) > 1:
+        query["where"] = {"and": conditions}
+    elif len(conditions) == 1:
+        query["where"] = conditions[0]
+
+    try:
+        data["query"] = sql_format(query)
+    except Exception:
+        # parsing sql query with PIVOT keyword gives an error
+        data["query"] = self.context.sql_query
+
+    if form.get("p"):
+        data["p"] = form.get("p")
+
+    if form.get("nrOfHits"):
+        data["nrOfHits"] = form.get("nrOfHits")
+
+    try:
+        req = requests.post(self.context.endpoint_url, data)
+        data = req.json()
+    except Exception:
+        logger.exception("Error in requestion data")
+        data = {"results": [], "metadata": metadata}
+
+    if "errors" in data:
+        return {"results": [], "metadata": metadata}
+
+    # This will also change orientation
+    return {
+        "results": filteredData(data["results"], data_query),
+        "metadata": metadata,
+    }
 
 
 def get_url(item):
