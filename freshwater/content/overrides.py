@@ -21,7 +21,74 @@ from mo_sql_parsing import format as sql_format
 from eea.api.dataconnector.queryparser import parseQuery
 from eea.api.dataconnector.queryfilter import filteredData
 
+from eea.volto.policy.image_scales.interfaces import IImagingSchema
+
 logger = logging.getLogger(__name__)
+
+
+def _split_scale_info(allowed_size):
+    """
+    get desired attr(name,width,height) from scale names
+    """
+    name, dims = allowed_size.split(" ")
+    width, height = list(map(int, dims.split(":")))
+    return name, width, height
+
+
+def _get_scale_infos():
+    """Returns list of (name, width, height) of the available image scales."""
+    if IImagingSchema is None:
+        return []
+    registry = getUtility(IRegistry)
+    imaging_settings = registry.forInterface(
+        IImagingSchema, prefix="plone", omit=("picture_variants")
+    )
+    allowed_sizes = imaging_settings.allowed_sizes
+    return [_split_scale_info(size) for size in allowed_sizes]
+
+
+def get_scales(self, field, width, height):
+    """Get a dictionary of available scales for a particular image field,
+    with the actual dimensions (aspect ratio of the original image).
+    """
+    scales = {}
+
+    for name, actual_width, actual_height in _get_scale_infos():
+        if actual_width > width:
+            # The width of the scale is larger than the original width.
+            # Scaling would simply return the original (or perhaps a copy
+            # with the same size).  We do not need this scale.
+            # If we *do* want this, we should call the scale method with
+            # mode="cover", so it scales up.
+            continue
+
+            # Get the scale info without actually generating the scale,
+            # nor any old-style HiDPI scales.
+        
+        try:
+            scale = self.images_view.scale(
+                field.__name__,
+                width=actual_width,
+                height=actual_height,
+            )
+        except Exception:
+            scale = None
+
+        if scale is None:
+            # If we cannot get a scale, it is probably a corrupt image.
+            continue
+
+        url = scale.url
+        actual_width = scale.width
+        actual_height = scale.height
+
+        scales[name] = {
+            "download": self._scale_view_from_url(url),
+            "width": actual_width,
+            "height": actual_height,
+        }
+
+    return scales
 
 
 def _get_data(self):
@@ -113,6 +180,7 @@ def get_view_url(context):
 @implementer(INavigationBreadcrumbs)
 class PhysicalNavigationBreadcrumbs(BrowserView):
     """PhysicalNavigationBreadcrumbs"""
+
     def breadcrumbs(self):
         """breadcrumbs"""
         context = aq_inner(self.context)
