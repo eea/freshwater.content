@@ -29,6 +29,13 @@
     replacement=".overrides._get_data"
     />
 
+  <monkey:patch
+    description="Bypass POSKEY errors on images"
+    class="eea.volto.policy.image_scales.adapters.ImageFieldScales"
+    original="get_scales"
+    replacement=".overrides.get_scales"
+    />
+
   <browser:page
     for="*"
     name="breadcrumbs_view"
