@@ -64,7 +64,7 @@ def get_scales(self, field, width, height):
 
             # Get the scale info without actually generating the scale,
             # nor any old-style HiDPI scales.
-        
+
         try:
             scale = self.images_view.scale(
                 field.__name__,
