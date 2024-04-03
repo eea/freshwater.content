@@ -95,34 +95,36 @@ def _get_data(self):
     """_get_data."""
     data = {}
     metadata = self._get_metadata()
-    sql = parseQuery(self.context, self.request)
-
-    if not sql:
-        return {"results": [], "metadata": metadata}
-
-    conditions = sql.get("conditions")
-    data_query = sql.get("data_query")
-    form = sql.get("form")
-    query = sql.get("query")
-
-    if "where" in query and conditions:
-        query["where"] = {"and": conditions + [query["where"]]}
-    elif "where" not in query and len(conditions) > 1:
-        query["where"] = {"and": conditions}
-    elif len(conditions) == 1:
-        query["where"] = conditions[0]
-
     try:
+        sql = parseQuery(self.context, self.request)
+
+        if not sql:
+            return {"results": [], "metadata": metadata}
+
+        conditions = sql.get("conditions")
+        data_query = sql.get("data_query")
+        form = sql.get("form")
+        query = sql.get("query")
+
+        if "where" in query and conditions:
+            query["where"] = {"and": conditions + [query["where"]]}
+        elif "where" not in query and len(conditions) > 1:
+            query["where"] = {"and": conditions}
+        elif len(conditions) == 1:
+            query["where"] = conditions[0]
+
         data["query"] = sql_format(query)
+
+        if form.get("p"):
+            data["p"] = form.get("p")
+
+        if form.get("nrOfHits"):
+            data["nrOfHits"] = form.get("nrOfHits")
+
     except Exception:
         # parsing sql query with PIVOT keyword gives an error
         data["query"] = self.context.sql_query
-
-    if form.get("p"):
-        data["p"] = form.get("p")
-
-    if form.get("nrOfHits"):
-        data["nrOfHits"] = form.get("nrOfHits")
+        data_query = []
 
     try:
         req = requests.post(self.context.endpoint_url, data)
