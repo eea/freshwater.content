@@ -6,7 +6,7 @@
   xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:plone="http://namespaces.plone.org/plone"
   i18n_domain="eea">
-  
+
   <i18n:registerTranslations directory="locales" />
 
   <include package="collective.monkeypatcher" />
@@ -14,6 +14,7 @@
   <include file="profiles.zcml" />
   <include package=".browser" />
   <include package=".upgrades" />
+  <include package=".services" />
 
   <!-- <monkey:patch -->
   <!--   description="This works around issue http://some.tracker.tld/ticket/123" -->
@@ -27,14 +28,14 @@
     class="eea.api.dataconnector.adapter.DataProviderForConnectors"
     original="_get_data"
     replacement=".overrides._get_data"
-    />
+  />
 
   <monkey:patch
     description="Bypass POSKEY errors on images"
     class="eea.volto.policy.image_scales.adapters.ImageFieldScales"
     original="get_scales"
     replacement=".overrides.get_scales"
-    />
+  />
 
   <browser:page
     for="*"
@@ -43,7 +44,7 @@
     permission="zope.Public"
     allowed_attributes="breadcrumbs"
     layer="freshwater.content.interfaces.IFreshwaterContentLayer"
-    />
+  />
 
   <plone:service
     method="GET"
@@ -52,12 +53,12 @@
     name="@search"
     permission="zope2.View"
     layer="freshwater.content.interfaces.IFreshwaterContentLayer"
-    />
+  />
 
   <adapter
     factory=".api.Breadcrumbs"
     name="breadcrumbs"
-    />
+  />
 
   <plone:service
     method="GET"
@@ -66,7 +67,7 @@
     name="@breadcrumbs"
     permission="zope2.View"
     layer="freshwater.content.interfaces.IFreshwaterContentLayer"
-    />
+  />
 
   <plone:service
     method="GET"
@@ -74,16 +75,16 @@
     factory=".api.BookmarksGet"
     name="@bookmarks-all"
     permission="zope2.View"
-    />
+  />
 
-   <plone:service
+  <plone:service
     method="PUT"
     for="zope.interface.Interface"
     factory=".api.BookmarkPut"
     name="@bookmark-update"
     permission="zope2.View"
-    />
-  
+  />
+
   <plone:behavior
     name="freshwater.catalogue-metadata"
     title="Freshwater Catalogue metadata"
@@ -92,7 +93,7 @@
     provides=".interfaces.ICatalogueMetadata"
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".interfaces.ICatalogueMetadata"
-    />
+  />
 
 
   <plone:behavior
@@ -103,7 +104,7 @@
     provides=".interfaces.IReportDataTypes"
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".interfaces.IReportDataTypes"
-    />
+  />
 
   <plone:behavior
     name="freshwater.wise-metadata"
@@ -113,7 +114,7 @@
     provides=".interfaces.IWiseMetadata"
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".interfaces.IWiseMetadata"
-    />
+  />
 
   <genericsetup:registerProfile
     name="metadata_catalogue"
@@ -121,51 +122,46 @@
     description="Install metadata catalogue specific settings"
     provides="Products.GenericSetup.interfaces.EXTENSION"
     directory="profiles/upgrades/metadata_catalogue"
-    />
+  />
 
   <utility
-      name="wise_themes_vocabulary"
-      component=".vocabulary.themes_vocabulary"
-      />
+    name="wise_themes_vocabulary"
+    component=".vocabulary.themes_vocabulary"
+  />
 
   <utility
-      name="wise_subthemes_vocabulary"
-      component=".vocabulary.subthemes_vocabulary"
-      />
+    name="wise_subthemes_vocabulary"
+    component=".vocabulary.subthemes_vocabulary"
+  />
 
   <utility
-      name="wise_organisations_vocabulary"
-      component=".vocabulary.organisations_vocabulary"
-      />
+    name="wise_organisations_vocabulary"
+    component=".vocabulary.organisations_vocabulary"
+  />
 
   <utility
-      name="wise_legislative_vocabulary"
-      component=".vocabulary.LegislativeReferenceVocabularyFactory"
-      />
+    name="wise_legislative_vocabulary"
+    component=".vocabulary.LegislativeReferenceVocabularyFactory"
+  />
 
   <utility
-      name="wise_category_vocabulary"
-      component=".vocabulary.CategoryVocabularyFactory"
-      />
+    name="wise_category_vocabulary"
+    component=".vocabulary.CategoryVocabularyFactory"
+  />
 
   <utility
-      name="wise_dpsir_vocabulary"
-      component=".vocabulary.dpsir_vocabulary"
-      />
+    name="wise_dpsir_vocabulary"
+    component=".vocabulary.dpsir_vocabulary"
+  />
 
   <utility
-      name="wise_report_vocabulary"
-      component=".vocabulary.report_vocabulary"
-      />
+    name="wise_report_vocabulary"
+    component=".vocabulary.report_vocabulary"
+  />
 
   <utility
-      name="wise_countries_complete_vocabulary"
-      component=".vocabulary.countries_complete_vocabulary"
-      />
-  
-  <adapter
-      factory=".catalog.block_types"
-      name="block_types"
-      />
+    name="wise_countries_complete_vocabulary"
+    component=".vocabulary.countries_complete_vocabulary"
+  />
 
 </configure>
