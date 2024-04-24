@@ -70,7 +70,7 @@ class TypesGet(BaseTypesGet):
         """
         if len(self.params) == 1 and self.params[0] == 'Plone Site':
             return self.reply_for_plone_site()
-        return super().reply()
+        return super(TypesGet, self).reply()
 
     def reply_for_plone_site(self):
         """
