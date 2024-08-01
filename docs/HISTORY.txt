@@ -1,6 +1,11 @@
 Changelog
 =========
 
+4.1 - (2024-08-01)
+---------------------------
+* Change: Release
+  [laszlocseh]
+
 4.0 - (2024-04-24)
 ---------------------------
 * Change: Override @types endpoint for Plone Site refs #267300
