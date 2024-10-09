@@ -43,7 +43,6 @@ class EEAFixture(PloneSandboxLayer):
         # Create testing environment
         portal.invokeFactory("Folder", "sandbox", title="Sandbox")
 
-
     def tearDownZope(self, app):
         """ Uninstall Zope
         """

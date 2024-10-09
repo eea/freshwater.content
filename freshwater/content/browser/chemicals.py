@@ -18,12 +18,14 @@ logger = logging.getLogger('freshwater.content')
 ENDPOINT_URL = "https://discodata.eea.europa.eu/sql"
 CREATION_PATH = {
     "SWPrioritySubstance": "/Plone/europe-freshwater/water-framework-directive"
-        "/surface-water-chemical-status"
-        "/priority-substances-causing-failure-to-good-chemical-status",
+    "/surface-water-chemical-status"
+    "/priority-substances-causing-failure-to-good-chemical-status",
+
     "swFailingRBSP": "/Plone/europe-freshwater/water-framework-directive"
-        "/ecological-status-of-surface-water/river-basin-specific-pollutants",
+    "/ecological-status-of-surface-water/river-basin-specific-pollutants",
+
     "GWPollutant": "/Plone/europe-freshwater/water-framework-directive"
-        "/groundwater-bodies-chemical-status/groundwater-pollutants",
+    "/groundwater-bodies-chemical-status/groundwater-pollutants",
 }
 
 
