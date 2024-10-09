@@ -1,16 +1,16 @@
 """ fetch data from discodata """
 
 SW_PRIORITY_SUBSTANCE_EU27_2022 = """
-select 
+select
 LOWER(CONCAT('EU27', '-', '3rd', '-', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(title, ' - ', '-'), ' + ', '-'), ' ', '-'), '_', '-'), '(', ''), ')', ''), ',', ''))) as 'id',
 title,
-count(*) as 'number_of_appearances', 
-count(distinct surfaceWaterBodyCategory) as 'number_of_categories', 
+count(*) as 'number_of_appearances',
+count(distinct surfaceWaterBodyCategory) as 'number_of_categories',
 count(distinct countryCode) as 'number_of_countries',
 '3rd' as 'management_plan',
 'SWPrioritySubstance' as 'chemical_type',
 'EU27' as 'country'
-from (SELECT 'chemical' as '@type', 
+from (SELECT 'chemical' as '@type',
 'Chemical' as 'type_title',
 SUBSTRING(REPLACE(swPrioritySubstanceCode, ' - ', '#'), CHARINDEX('#', REPLACE(swPrioritySubstanceCode, ' - ', '#'))+1, LEN(REPLACE(swPrioritySubstanceCode, ' - ', '#'))) as 'title',
 surfaceWaterBodyCategory,

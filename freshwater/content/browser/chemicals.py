@@ -1,4 +1,4 @@
-""" module to fetch chemical data from discodata and update the content types"""
+""" module to fetch chemical data from discodata and update the content """
 
 import logging
 import requests
@@ -25,6 +25,7 @@ CREATION_PATH = {
     "GWPollutant": "/Plone/europe-freshwater/water-framework-directive"
         "/groundwater-bodies-chemical-status/groundwater-pollutants",
 }
+
 
 class UpdateChemicalData(BrowserView):
     """ update chemical data """
@@ -66,7 +67,7 @@ class UpdateChemicalData(BrowserView):
 
         count_portal_catalog = len(objects_filtered)
         logger.info("Found %s objects in portal_catalog", count_portal_catalog)
-        
+
         # update objects
         for item in data['results']:
             found = False
@@ -93,28 +94,28 @@ class UpdateChemicalData(BrowserView):
             # create new object
             if not found:
                 count_created += 1
-                created_obj = createContentInContainer(
+                c_obj = createContentInContainer(
                     parent,
                     'chemical',
                     title=item['title'],
                     id=item['id'],
                 )
-                created_obj.number_of_appearances = item['number_of_appearances']
+                c_obj.number_of_appearances = item['number_of_appearances']
 
                 if chemical_type != 'GWPollutant':
-                    created_obj.number_of_categories = item['number_of_categories']
+                    c_obj.number_of_categories = item['number_of_categories']
 
                 if chemical_type == 'GWPollutant':
-                    created_obj.number_of_area = item['number_of_area']
+                    c_obj.number_of_area = item['number_of_area']
 
-                created_obj.number_of_countries = item['number_of_countries']
-                created_obj.chemical_type = chemical_type
-                created_obj.management_plan = management_plan
-                created_obj.country = item['country']
-                transition(obj=created_obj, transition='publish')
+                c_obj.number_of_countries = item['number_of_countries']
+                c_obj.chemical_type = chemical_type
+                c_obj.management_plan = management_plan
+                c_obj.country = item['country']
+                transition(obj=c_obj, transition='publish')
 
-                created_obj._p_changed = True
-                created_obj.reindexObject()
+                c_obj._p_changed = True
+                c_obj.reindexObject()
 
         logger.info("Updated %s objects", count_updated)
         logger.info("Created %s objects", count_created)
@@ -132,9 +133,9 @@ class UpdateChemicalData(BrowserView):
         alsoProvides(self.request, IDisableCSRFProtection)
 
         return {
-            "SW_PRIORITY_SUBSTANCE_EU27_2022": 
+            "SW_PRIORITY_SUBSTANCE_EU27_2022":
                 self.update_data(SW_PRIORITY_SUBSTANCE_EU27_2022),
-            "SW_PRIORITY_SUBSTANCE_COUNTRIES_2022": 
+            "SW_PRIORITY_SUBSTANCE_COUNTRIES_2022":
                 self.update_data(SW_PRIORITY_SUBSTANCE_COUNTRIES_2022),
             "SW_RBSP_POLLUTANT_COUNTRIES_2022":
                 self.update_data(SW_RBSP_POLLUTANT_COUNTRIES_2022),
