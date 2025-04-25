@@ -6,6 +6,8 @@ from Products.Five.browser import BrowserView
 
 from zope.interface import alsoProvides
 
+import transaction
+
 
 def t2r(text, remove_last_column=False):
     """ transform string to richtext """
@@ -55,3 +57,17 @@ class ToPDB(BrowserView):
         pdb.set_trace()
 
         alsoProvides(self.request, IDisableCSRFProtection)
+
+
+class BrokenSlotsScanner(BrowserView):
+    """BrokenSlotsScanner"""
+
+    def __call__(self):
+        ids_to_remove = ['uwwt', 'copy_of_uwwt']
+        parent = self.context
+
+        for obj_id in ids_to_remove:
+            parent._delObject(obj_id, suppress_events=True)
+            transaction.commit()
+
+        return "removed ids: {}".format(ids_to_remove)
