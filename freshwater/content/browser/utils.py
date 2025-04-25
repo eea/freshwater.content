@@ -8,6 +8,7 @@ from zope.interface import alsoProvides
 
 import transaction
 
+
 def t2r(text, remove_last_column=False):
     """ transform string to richtext """
 
