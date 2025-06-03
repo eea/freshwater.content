@@ -1,3 +1,4 @@
+""" NWRM benefits tables"""
 import json
 
 from Products.Five.browser import BrowserView
