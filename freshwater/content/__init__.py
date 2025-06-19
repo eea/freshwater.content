@@ -103,17 +103,27 @@ interfaces_mock.IEEARabbitMQPloneInstalled = IEEARabbitMQPloneInstalled
 sys.modules['eea.rabbitmq.plone.interfaces.layers'] = interfaces_mock
 
 
-class IPloneAppImagecroppingLayer(Interface):
-    """Mock interface: IPloneAppImagecroppingLayer"""
+# class IPloneAppImagecroppingLayer(Interface):
+#     """Mock interface: IPloneAppImagecroppingLayer"""
 
-interfaces_mock = types.ModuleType('plone.app.imagecropping.interfaces')
-interfaces_mock.IPloneAppImagecroppingLayer = IPloneAppImagecroppingLayer
-sys.modules['plone.app.imagecropping.interfaces'] = interfaces_mock
+#     __module__ = "plone.app.imagecropping.interfaces"
+
+# interfaces_mock = types.ModuleType('plone.app.imagecropping.interfaces')
+# interfaces_mock.IPloneAppImagecroppingLayer = IPloneAppImagecroppingLayer
+# sys.modules['plone.app.imagecropping.interfaces'] = interfaces_mock
 
 
-class IImageCroppingMarker(Interface):
-    """Mock interface: IImageCroppingMarker"""
+# class IImageCroppingMarker(Interface):
+#     """Mock interface: IImageCroppingMarker"""
 
-interfaces_mock = types.ModuleType('plone.app.imagecropping.interfaces')
-interfaces_mock.IImageCroppingMarker = IImageCroppingMarker
-sys.modules['plone.app.imagecropping.interfaces'] = interfaces_mock
+# interfaces_mock = types.ModuleType('plone.app.imagecropping.interfaces')
+# interfaces_mock.IImageCroppingMarker = IImageCroppingMarker
+# sys.modules['plone.app.imagecropping.interfaces'] = interfaces_mock
+
+
+# class ICroppingInfoChangedEvent(Interface):
+#     """Mock interface: ICroppingInfoChangedEvent"""
+
+# interfaces_mock = types.ModuleType('plone.app.imagecropping.interfaces')
+# interfaces_mock.ICroppingInfoChangedEvent = ICroppingInfoChangedEvent
+# sys.modules['plone.app.imagecropping.interfaces'] = interfaces_mock
