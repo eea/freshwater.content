@@ -1,7 +1,7 @@
 """ utils """
 
-import transaction
 import logging
+import transaction
 
 from plone import api
 from plone.app.textfield.value import RichTextValue
