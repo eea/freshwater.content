@@ -1,5 +1,8 @@
 """ utils """
 
+import transaction
+import logging
+
 from plone import api
 from plone.app.textfield.value import RichTextValue
 from plone.protect.interfaces import IDisableCSRFProtection
@@ -7,8 +10,6 @@ from Products.Five.browser import BrowserView
 
 from zope.interface import alsoProvides
 
-import transaction
-import logging
 
 logger = logging.getLogger('freshwater.content')
 
