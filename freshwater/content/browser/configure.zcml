@@ -20,6 +20,13 @@
         permission="cmf.ManagePortal"
     />
 
+    <browser:view
+        name="fix-resource-dependency"
+        for="*"
+        class=".utils.FixPlone6ResourceDependency"
+        permission="cmf.ManagePortal"
+    />
+
   <browser:page
     for="*"
     name="get-benefits-table-data"
