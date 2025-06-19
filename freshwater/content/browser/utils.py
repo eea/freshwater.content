@@ -5,11 +5,12 @@ import transaction
 
 from plone import api
 from plone.app.textfield.value import RichTextValue
+from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.Five.browser import BrowserView
 
 from zope.interface import alsoProvides
-
+from zope.component import getSiteManager
 
 logger = logging.getLogger('freshwater.content')
 
@@ -100,6 +101,14 @@ class FixPlone6ResourceDependency(BrowserView):
                     logger.info(
                         "Removing condition from action: %s", action.id)
                     category.manage_delObjects([action.id])
+
+        sm = getSiteManager(self.context)
+
+        try:
+            sm.unregisterUtility(provided=ILocalBrowserLayerType, name='plone.app.imagecropping')
+            logger.info("Utility unregistered successfully.")
+        except Exception as e:
+            logger.info("Error unregistering utility: %s", e)
 
         transaction.commit()
 
