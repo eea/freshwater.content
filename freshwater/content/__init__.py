@@ -77,6 +77,7 @@ utils.path2uid = path2uid
 #########################
 # mock interfaces for the plone 6 migration
 
+
 class ILinkedDataHomepage(Interface):
     """Mock interface: ILinkedDataHomepage"""
 
@@ -88,7 +89,8 @@ sys.modules['eea.dexterity.rdfmarshaller.interfaces'] = interfaces_mock
 class IDataGridFieldLayer(Interface):
     """Mock interface: IDataGridFieldLayer"""
 
-interfaces_mock = types.ModuleType('collective.z3cform.datagridfield.interfaces')
+interfaces_mock = types.ModuleType(
+    'collective.z3cform.datagridfield.interfaces')
 interfaces_mock.IDataGridFieldLayer = IDataGridFieldLayer
 sys.modules['collective.z3cform.datagridfield.interfaces'] = interfaces_mock
 
