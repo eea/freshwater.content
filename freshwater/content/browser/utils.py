@@ -105,7 +105,7 @@ class FixPlone6ResourceDependency(BrowserView):
         sm = getSiteManager(self.context)
 
         try:
-            sm.unregisterUtility(provided=ILocalBrowserLayerType, 
+            sm.unregisterUtility(provided=ILocalBrowserLayerType,
                                  name='plone.app.imagecropping')
             logger.info("Utility unregistered successfully.")
         except Exception as e:
