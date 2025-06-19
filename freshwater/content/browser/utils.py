@@ -84,7 +84,7 @@ class FixPlone6ResourceDependency(BrowserView):
 
         for key in list(registry.records.keys()):
             if 'imagecropping' in key:
-                print(f"Deleting registry key: {key}")
+                print("Deleting registry key: {}".format(key))
                 del registry.records[key]
 
         portal_actions = api.portal.get_tool(name='portal_actions')
@@ -93,7 +93,8 @@ class FixPlone6ResourceDependency(BrowserView):
                 available_expr = getattr(action, 'available_expr', '')
 
                 if available_expr and 'imagecropping' in available_expr:
-                    print(f"Removing condition from action: {action.id}")
+                    print(
+                        "Removing condition from action: {}".format(action.id))
                     category.manage_delObjects([action.id])
 
         transaction.commit()
