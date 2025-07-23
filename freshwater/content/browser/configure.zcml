@@ -29,6 +29,13 @@
 
   <browser:page
     for="*"
+    name="matrix-connectors"
+    class=".matrix_connectors.MatrixConnectors"
+    permission="zope2.View"
+      />
+
+  <browser:page
+    for="*"
     name="get-benefits-table-data"
     class=".nwrm_benefits_table.BenefitsTableData"
     permission="zope2.View"
@@ -88,6 +95,7 @@
     name="topdb"
     class=".utils.ToPDB"
     permission="cmf.ManagePortal"
-    />
+      />
 
 </configure>
+
