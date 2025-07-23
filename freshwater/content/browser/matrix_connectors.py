@@ -1,13 +1,7 @@
+import os
 import json
-from z3c.relationfield.schema import RelationChoice
-from plone.app.vocabularies.catalog import CatalogSource
-from DateTime.DateTime import DateTime
-from plone.restapi.services import Service
-from zope.component import getMultiAdapter
 from Products.Five.browser import BrowserView
 from plone import api
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import iterSchemata
 
 """
 TODO: [x] Get all visualizations (Too much data to get siblings, think about it)
@@ -37,6 +31,12 @@ class MatrixConnectors(BrowserView):
 
         for brain in visualizations_result:
             obj = brain.getObject()
+            connectors_result = api.content.find(portal_type="discodataconnector")
+
+            visualization = getattr(obj, 'visualization', None)
+            provider_url = visualization.get('provider_url')
+            filename = os.path.basename(provider_url)
+            name = os.path.splitext(filename)[0]
 
             visualizations.append({
                 "id": obj.id,
@@ -44,7 +44,9 @@ class MatrixConnectors(BrowserView):
                 "url": brain.getURL(),
                 "path": brain.getPath(),
                 "title": obj.Title(),
-                "description": obj.Description()
+                "description": obj.Description(),
+                "provider_url": provider_url,
+                "connector": name
             })
 
         self.request.response.setHeader("Content-Type", "application/json")
