@@ -1,4 +1,6 @@
 import json
+from z3c.relationfield.schema import RelationChoice
+from plone.app.vocabularies.catalog import CatalogSource
 from DateTime.DateTime import DateTime
 from plone.restapi.services import Service
 from zope.component import getMultiAdapter
@@ -16,13 +18,29 @@ TODO: [] Determine status of visualizations and used pages
 
 class MatrixConnectors(BrowserView):
     def __call__(self):
-        results = api.content.find(portal_type="visualization")
+        visualizations_result = api.content.find(portal_type="visualization")
+        connectors_result = api.content.find(portal_type="discodataconnector")
         visualizations = []
-        for brain in results:
+        connectors = []
+
+        for brain in connectors_result:
+            obj = brain.getObject()
+
+            connectors.append({
+                "id": obj.id,
+                "uid": obj.UID(),
+                "url": brain.getURL(),
+                "path": brain.getPath(),
+                "title": obj.Title(),
+                "description": obj.Description()
+            })
+
+        for brain in visualizations_result:
             obj = brain.getObject()
 
             visualizations.append({
                 "id": obj.id,
+                "uid": obj.UID(),
                 "url": brain.getURL(),
                 "path": brain.getPath(),
                 "title": obj.Title(),
@@ -30,4 +48,4 @@ class MatrixConnectors(BrowserView):
             })
 
         self.request.response.setHeader("Content-Type", "application/json")
-        return json.dumps(visualizations)
+        return json.dumps({"visualizations": visualizations, "connectors": connectors})
