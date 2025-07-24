@@ -29,10 +29,17 @@
 
   <browser:page
     for="*"
-    name="matrix-connectors"
-    class=".matrix_connectors.MatrixConnectors"
+    name="visualizations-connectors"
+    class=".visualizations_connectors.VisualizationsConnectors"
     permission="zope2.View"
-      />
+    />
+
+  <browser:page
+    for="*"
+    name="visualizations-status"
+    class=".visualizations_status.VisualizationsStatus"
+    permission="zope2.View"
+    />
 
   <browser:page
     for="*"

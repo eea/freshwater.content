@@ -3,15 +3,8 @@ import json
 from Products.Five.browser import BrowserView
 from plone import api
 
-"""
-TODO: [x] Get all visualizations and related connectors
-TODO: [x] Handle .csv connectors
-TODO: [x] Map visualizations and connectors
-TODO: [] Determine status of visualizations and used pages
-"""
 
-
-class MatrixConnectors(BrowserView):
+class VisualizationsConnectors(BrowserView):
     def __call__(self):
         connectors = self.get_related_data("discodataconnector")
         files = self.get_related_data("File")
