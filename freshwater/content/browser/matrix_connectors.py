@@ -5,54 +5,36 @@ from plone import api
 
 """
 TODO: [x] Get all visualizations and related connectors
-TODO: [] Handle .csv connectors
-TODO: [] Map connectors to visualizations
-TODO: [] Determine relationship between visualizations and connectors
+TODO: [x] Handle .csv connectors
+TODO: [x] Map visualizations and connectors
 TODO: [] Determine status of visualizations and used pages
 """
 
+
 class MatrixConnectors(BrowserView):
     def __call__(self):
-        visualizations_result = api.content.find(portal_type="visualization")
-        connectors_result = api.content.find(portal_type="discodataconnector")
-        files_result = api.content.find(portal_type="File")
-        visualizations = []
-        connectors = {}
-        files = {}
+        connectors = self.get_related_data("discodataconnector")
+        files = self.get_related_data("File")
+        visualizations = self.get_visualizations(connectors, files)
 
-        for brain in connectors_result:
+        self.request.response.setHeader("Content-Type", "application/json")
+        return json.dumps({
+            "data": visualizations,
+            "count": len(visualizations)
+        })
+
+    def get_visualizations(self, connectors, files):
+        result = api.content.find(portal_type="visualization")
+        data = []
+
+        for brain in result:
             obj = brain.getObject()
 
-            connectors[obj.id] = {
-                "id": obj.id,
-                "uid": obj.UID(),
-                "url": brain.getURL(),
-                "path": brain.getPath(),
-                "title": obj.Title(),
-                "description": obj.Description()
-            }
-
-        for brain in files_result:
-            obj = brain.getObject()
-
-            files[obj.id] = {
-                "id": obj.id,
-                "uid": obj.UID(),
-                "url": brain.getURL(),
-                "path": brain.getPath(),
-                "title": obj.Title(),
-                "description": obj.Description()
-            }
-
-        for brain in visualizations_result:
-            obj = brain.getObject()
-            connectors_result = api.content.find(portal_type="discodataconnector")
-
-            visualization = getattr(obj, 'visualization', None)
-            provider_url = visualization.get('provider_url')
+            visualization_attr = getattr(obj, 'visualization', None)
+            provider_url = visualization_attr.get('provider_url')
             name = os.path.basename(provider_url)
 
-            visualizations.append({
+            data.append({
                 "id": obj.id,
                 "uid": obj.UID(),
                 "url": brain.getURL(),
@@ -64,5 +46,22 @@ class MatrixConnectors(BrowserView):
                 "file": files.get(name, None)
             })
 
-        self.request.response.setHeader("Content-Type", "application/json")
-        return json.dumps(visualizations)
+        return data
+
+    def get_related_data(self, portal_type):
+        result = api.content.find(portal_type=portal_type)
+        data = {}
+
+        for brain in result:
+            obj = brain.getObject()
+
+            data[obj.id] = {
+                "id": obj.id,
+                "uid": obj.UID(),
+                "url": brain.getURL(),
+                "path": brain.getPath(),
+                "title": obj.Title(),
+            }
+
+        return data
+
