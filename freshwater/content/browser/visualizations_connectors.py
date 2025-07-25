@@ -1,3 +1,4 @@
+"""Visualizations relationship with connectors"""
 import os
 import json
 from Products.Five.browser import BrowserView
@@ -5,9 +6,10 @@ from plone import api
 
 
 class VisualizationsConnectors(BrowserView):
+    """Visualizations related connectors"""
     def __call__(self):
-        connectors = self.get_related_data("discodataconnector")
-        files = self.get_related_data("File")
+        connectors = self.get_data("discodataconnector")
+        files = self.get_data("File")
         visualizations = self.get_visualizations(connectors, files)
 
         self.request.response.setHeader("Content-Type", "application/json")
@@ -17,6 +19,7 @@ class VisualizationsConnectors(BrowserView):
         })
 
     def get_visualizations(self, connectors, files):
+        """Get visualizations and add connectors and files relationships"""
         result = api.content.find(portal_type="visualization")
         data = []
 
@@ -41,7 +44,8 @@ class VisualizationsConnectors(BrowserView):
 
         return data
 
-    def get_related_data(self, portal_type):
+    def get_data(self, portal_type):
+        """Get all data based on type to be mapped on visualizations"""
         result = api.content.find(portal_type=portal_type)
         data = {}
 

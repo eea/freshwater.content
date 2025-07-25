@@ -1,16 +1,18 @@
+"""Visualization status and all used urls"""
 import json
 from Products.Five.browser import BrowserView
 from plone import api
-from plone.restapi.interfaces import ISerializeToJson
-from zope.component import getMultiAdapter
 
 
 class VisualizationsStatus(BrowserView):
+    """Visualizations status and ussage"""
     def __call__(self):
         visualizations = self.get_visualizations()
 
         self.request.response.setHeader("Content-Type", "application/json")
-        return json.dumps({"data": visualizations, "count": len(visualizations)})
+        return json.dumps({
+            "data": visualizations, "count": len(visualizations)
+            })
 
     def get_visualizations(self):
         result = api.content.find(portal_type="visualization")
@@ -33,3 +35,4 @@ class VisualizationsStatus(BrowserView):
                 data[obj.id] = [path]
 
         return data
+
