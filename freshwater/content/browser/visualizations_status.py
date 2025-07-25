@@ -12,9 +12,10 @@ class VisualizationsStatus(BrowserView):
         self.request.response.setHeader("Content-Type", "application/json")
         return json.dumps({
             "data": visualizations, "count": len(visualizations)
-            })
+        })
 
     def get_visualizations(self):
+        """Get visualizations and gather all ussages"""
         result = api.content.find(portal_type="visualization")
         data = {}
 
@@ -35,4 +36,3 @@ class VisualizationsStatus(BrowserView):
                 data[obj.id] = [path]
 
         return data
-

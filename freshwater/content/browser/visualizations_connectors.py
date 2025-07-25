@@ -61,4 +61,3 @@ class VisualizationsConnectors(BrowserView):
             }
 
         return data
-
