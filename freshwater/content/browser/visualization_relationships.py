@@ -15,7 +15,6 @@ class VisualizationRelationships(BrowserView):
         start = self.safe_int(self.request.get('b_start'), 0)
         size = self.safe_int(self.request.get('b_size'), 10)
 
-        total = len(visualizations)
         end = start + size
         sliced = visualizations[start:end]
 
@@ -70,6 +69,7 @@ class VisualizationRelationships(BrowserView):
         return data
 
     def safe_int(self, value, default):
+        """Safe format to int"""
         try:
             return max(1, int(value))
         except (ValueError, TypeError):
