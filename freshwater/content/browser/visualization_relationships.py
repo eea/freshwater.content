@@ -19,7 +19,6 @@ class VisualizationRelationships(BrowserView):
         end = start + size
         sliced = visualizations[start:end]
 
-
         self.request.response.setHeader("Content-Type", "application/json")
         return json.dumps({
             "data": sliced,

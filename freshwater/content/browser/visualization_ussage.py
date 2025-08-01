@@ -19,7 +19,7 @@ class VisualizationUssage(BrowserView):
 
         self.request.response.setHeader("Content-Type", "application/json")
         return json.dumps({
-            "data": dict(sliced), "count": total
+            "data": dict(sliced), "count": total,
         })
 
     def get_visualizations(self):
@@ -48,6 +48,7 @@ class VisualizationUssage(BrowserView):
         return data
 
     def safe_int(self, value, default):
+        """Safe format to int"""
         try:
             return max(1, int(value))
         except (ValueError, TypeError):
