@@ -1,20 +1,26 @@
-"""Visualizations relationship with connectors"""
+"""Visualizations relationships with connectors"""
 import os
 import json
 from Products.Five.browser import BrowserView
 from plone import api
 
 
-class VisualizationsConnectors(BrowserView):
-    """Visualizations related connectors"""
+class VisualizationRelationships(BrowserView):
+    """Visualizations relationships"""
     def __call__(self):
         connectors = self.get_data("discodataconnector")
         files = self.get_data("File")
         visualizations = self.get_visualizations(connectors, files)
 
+        start = self.safe_int(self.request.get('b_start'), 0)
+        size = self.safe_int(self.request.get('b_size'), 10)
+
+        end = start + size
+        sliced = visualizations[start:end]
+
         self.request.response.setHeader("Content-Type", "application/json")
         return json.dumps({
-            "data": visualizations,
+            "data": sliced,
             "count": len(visualizations)
         })
 
@@ -56,8 +62,15 @@ class VisualizationsConnectors(BrowserView):
                 "id": obj.id,
                 "uid": obj.UID(),
                 "url": brain.getURL(),
-                "path": brain.getPath(),
+                "path": brain.getPath().replace('/Plone', ''),
                 "title": obj.Title(),
             }
 
         return data
+
+    def safe_int(self, value, default):
+        """Safe format to int"""
+        try:
+            return max(1, int(value))
+        except (ValueError, TypeError):
+            return default

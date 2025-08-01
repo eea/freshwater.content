@@ -29,15 +29,15 @@
 
   <browser:page
     for="*"
-    name="visualizations-connectors"
-    class=".visualizations_connectors.VisualizationsConnectors"
+    name="visualization-relationships"
+    class=".visualization_relationships.VisualizationRelationships"
     permission="zope2.View"
     />
 
   <browser:page
     for="*"
-    name="visualizations-status"
-    class=".visualizations_status.VisualizationsStatus"
+    name="visualization-ussage"
+    class=".visualization_ussage.VisualizationUssage"
     permission="zope2.View"
     />
 
