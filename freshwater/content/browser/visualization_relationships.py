@@ -24,6 +24,19 @@ class VisualizationRelationships(BrowserView):
             "count": len(visualizations)
         })
 
+    def get_name(self, provider_url):
+        """Get the name of the discodata connector or of the file"""
+        if not provider_url:
+            return None
+
+        if 'resolveuid/' in provider_url:
+            uid = provider_url.split('resolveuid/')[-1].strip('/')
+            target_obj = api.content.get(UID=uid)
+            if target_obj is not None and hasattr(target_obj, 'getId'):
+                return target_obj.getId()
+            return None
+        return os.path.basename(provider_url)
+
     def get_visualizations(self, connectors, files):
         """Get visualizations and add connectors and files relationships"""
         result = api.content.find(portal_type="visualization")
@@ -34,8 +47,7 @@ class VisualizationRelationships(BrowserView):
 
             visualization_attr = getattr(obj, 'visualization', None)
             provider_url = visualization_attr.get('provider_url')
-            name = os.path.basename(provider_url)
-
+            name = self.get_name(provider_url)
             data.append({
                 "id": obj.id,
                 "uid": obj.UID(),
