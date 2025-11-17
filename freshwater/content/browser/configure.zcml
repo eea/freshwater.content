@@ -29,20 +29,6 @@
 
   <browser:page
     for="*"
-    name="visualization-relationships"
-    class=".visualization_relationships.VisualizationRelationships"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    for="*"
-    name="visualization-ussage"
-    class=".visualization_ussage.VisualizationUssage"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    for="*"
     name="get-benefits-table-data"
     class=".nwrm_benefits_table.BenefitsTableData"
     permission="zope2.View"
