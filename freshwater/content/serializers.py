@@ -7,8 +7,8 @@ collective.exportimport exports images as base64 by marking the request with
 ``(INamedImageField, IDexterityContent, IBase64BlobsMarker)``.
 
 ``eea.volto.policy`` registers a *dedicated* image serializer for
-``(INamedImageField, IDexterityContent, IEeaVoltoPolicyLayer)`` which subclasses
-plone.restapi's ``ImageFieldSerializer`` (the one that produces
+``(INamedImageField, IDexterityContent, IEeaVoltoPolicyLayer)`` which
+subclasses plone.restapi's ``ImageFieldSerializer`` (the one that produces
 download/scales/size instead of base64 ``data``).
 
 During export the request provides both ``IBase64BlobsMarker`` and
@@ -21,11 +21,11 @@ instead of base64.
 Fix: register base64 serializers for the *more specific* field interfaces
 (``INamedBlobImageField`` / ``INamedBlobFileField``). A more specific field
 interface outranks any adapter registered for the base ``INamedImageField`` /
-``INamedFileField`` on the field axis, so these win adapter lookup during base64
-export regardless of browser layer or load order.
+``INamedFileField`` on the field axis, so these win adapter lookup during
+base64 export regardless of browser layer or load order.
 
 The non-blob ``INamedImageField`` case (e.g. plone.leadimage ``NamedImage``) is
-covered by re-registering for ``INamedImageField`` + ``IBase64BlobsMarker`` here;
+covered by re-registering for ``INamedImageField`` + ``IBase64BlobsMarker``;
 since freshwater.content loads after both collective.exportimport and
 eea.volto.policy, it wins that tie too.
 """
@@ -47,7 +47,8 @@ from zope.interface import implementer
 @adapter(INamedBlobImageField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
 class BlobImageFieldSerializerBase64(FileFieldSerializerWithBlobs):
-    """Export blob image fields as base64 during collective.exportimport export."""
+    """Export blob image fields as base64
+    during collective.exportimport export."""
 
 
 # Blob file (plone.app.contenttypes File). Defensive: collective.exportimport
@@ -55,7 +56,8 @@ class BlobImageFieldSerializerBase64(FileFieldSerializerWithBlobs):
 @adapter(INamedBlobFileField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
 class BlobFileFieldSerializerBase64(FileFieldSerializerWithBlobs):
-    """Export blob file fields as base64 during collective.exportimport export."""
+    """Export blob file fields as base64
+    during collective.exportimport export."""
 
 
 # Non-blob image (NamedImage, e.g. plone.leadimage). Same registration triple as
@@ -64,11 +66,13 @@ class BlobFileFieldSerializerBase64(FileFieldSerializerWithBlobs):
 @adapter(INamedImageField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
 class NamedImageFieldSerializerBase64(FileFieldSerializerWithBlobs):
-    """Export non-blob image fields as base64 during collective.exportimport export."""
+    """Export non-blob image fields as base64
+    during collective.exportimport export."""
 
 
 # Non-blob file (NamedFile). Same reasoning as the non-blob image above.
 @adapter(INamedFileField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
 class NamedFileFieldSerializerBase64(FileFieldSerializerWithBlobs):
-    """Export non-blob file fields as base64 during collective.exportimport export."""
+    """Export non-blob file fields as base64
+    during collective.exportimport export."""
