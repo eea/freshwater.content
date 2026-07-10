@@ -52,7 +52,7 @@ class BlobImageFieldSerializerBase64(FileFieldSerializerWithBlobs):
 
 
 # Blob file (plone.app.contenttypes File). Defensive: collective.exportimport
-# already wins this, but pin it explicitly so future EEA adapters can't regress.
+# already wins this, but pin it explicitly so future EEA adapters can't regress
 @adapter(INamedBlobFileField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
 class BlobFileFieldSerializerBase64(FileFieldSerializerWithBlobs):
@@ -60,8 +60,8 @@ class BlobFileFieldSerializerBase64(FileFieldSerializerWithBlobs):
     during collective.exportimport export."""
 
 
-# Non-blob image (NamedImage, e.g. plone.leadimage). Same registration triple as
-# collective.exportimport's stock adapter; wins the tie because this package
+# Non-blob image (NamedImage, e.g. plone.leadimage). Same registration triple
+# as collective.exportimport's stock adapter; wins the tie because this package
 # loads last.
 @adapter(INamedImageField, IDexterityContent, IBase64BlobsMarker)
 @implementer(IFieldSerializer)
