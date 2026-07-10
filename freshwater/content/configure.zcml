@@ -1,6 +1,5 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
-  xmlns:zcml="http://namespaces.zope.org/zcml"
   xmlns:monkey="http://namespaces.plone.org/monkey"
   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   xmlns:i18n="http://namespaces.zope.org/i18n"
@@ -60,20 +59,6 @@
     factory=".api.Breadcrumbs"
     name="breadcrumbs"
   />
-
-  <!-- Base64 serializers for collective.exportimport.
-       eea.volto.policy registers InheritableImageFieldSerializer for
-       (INamedImageField, IDexterityContent, IEeaVoltoPolicyLayer) which defeats
-       collective.exportimport's marker-based base64 serializer (tie broken by
-       load order). These are registered for the more specific blob field
-       interfaces so they win on field specificity regardless of layer/order.
-       See .serializers for details. -->
-  <configure zcml:condition="installed collective.exportimport">
-    <adapter factory=".serializers.BlobImageFieldSerializerBase64" />
-    <adapter factory=".serializers.BlobFileFieldSerializerBase64" />
-    <adapter factory=".serializers.NamedImageFieldSerializerBase64" />
-    <adapter factory=".serializers.NamedFileFieldSerializerBase64" />
-  </configure>
 
   <plone:service
     method="GET"
