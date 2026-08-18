@@ -39,8 +39,6 @@ setup(
     install_requires=[
         'setuptools',
         'collective.bookmarks',
-        'collective.exportimport',
-        'plone.namedfile',
     ],
     # -*- Extra requirements: -*-
     extras_require={
