@@ -20,6 +20,7 @@ from freshwater.content.interfaces import IFreshwaterContentLayer
 @adapter(Interface, IFreshwaterContentLayer)
 class Breadcrumbs(object):
     """Breadcrumbs"""
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -57,6 +58,7 @@ class Breadcrumbs(object):
 
 class BreadcrumbsGet(Service):
     """BreadcrumbsGet"""
+
     def reply(self):
         """reply"""
         breadcrumbs = Breadcrumbs(self.context, self.request)
@@ -65,6 +67,7 @@ class BreadcrumbsGet(Service):
 
 class BookmarksAll(Bookmarks):
     """BookmarksAll"""
+
     def fetch_all(self, query):
         """fetch all bookmarks
 
@@ -78,6 +81,7 @@ class BookmarksAll(Bookmarks):
 
 class BookmarksGet(Service):
     """BookmarksGet"""
+
     def reply(self):
         """get all bookmarks
 
@@ -104,6 +108,7 @@ class BookmarksGet(Service):
 
 class BookmarkPut(Service):
     """BookmarkPut"""
+
     def reply(self):
         """update bookmark by
 
@@ -130,6 +135,7 @@ class BookmarkPut(Service):
 
 class SearchGet(BaseSearchGet):
     ''' search - get '''
+
     def reply(self):
         ''' reply '''
         # this instructs the SummarySerializer to include breadcrumb
