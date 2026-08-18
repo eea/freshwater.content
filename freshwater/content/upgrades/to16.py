@@ -9,7 +9,7 @@ from freshwater.content.blocks import BlocksTraverser
 
 # pylint: disable = C0412
 
-logger = logging.getLogger('eea.restapi.migration')
+logger = logging.getLogger('freshwater.content.migration')
 
 TYPES = ['countryHeaderDataBlock', 'conditionalDataBlock', 'plotly_chart']
 

@@ -4,7 +4,7 @@ import logging
 from plone import api
 from freshwater.content.blocks import BlocksTraverser
 
-logger = logging.getLogger('eea.restapi.migration')
+logger = logging.getLogger('freshwater.content.migration')
 
 
 class ImageCardTransformer(object):

@@ -7,6 +7,7 @@ from collective.bookmarks.storage import Bookmarks
 from plone.restapi.interfaces import IExpandableElement
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.restapi.services import Service
+from plone.restapi.services.search.get import SearchGet as BaseSearchGet
 from zope.component import adapter, getMultiAdapter
 from zope.interface import alsoProvides, implementer, Interface
 from repoze.catalog.query import Eq, NotEq
@@ -19,6 +20,7 @@ from freshwater.content.interfaces import IFreshwaterContentLayer
 @adapter(Interface, IFreshwaterContentLayer)
 class Breadcrumbs(object):
     """Breadcrumbs"""
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -56,6 +58,7 @@ class Breadcrumbs(object):
 
 class BreadcrumbsGet(Service):
     """BreadcrumbsGet"""
+
     def reply(self):
         """reply"""
         breadcrumbs = Breadcrumbs(self.context, self.request)
@@ -64,6 +67,7 @@ class BreadcrumbsGet(Service):
 
 class BookmarksAll(Bookmarks):
     """BookmarksAll"""
+
     def fetch_all(self, query):
         """fetch all bookmarks
 
@@ -77,6 +81,7 @@ class BookmarksAll(Bookmarks):
 
 class BookmarksGet(Service):
     """BookmarksGet"""
+
     def reply(self):
         """get all bookmarks
 
@@ -103,6 +108,7 @@ class BookmarksGet(Service):
 
 class BookmarkPut(Service):
     """BookmarkPut"""
+
     def reply(self):
         """update bookmark by
 
@@ -125,3 +131,18 @@ class BookmarkPut(Service):
             bookmark = bookmarks.add(owner, uid, group, queryparams, payload)
         self.request.response.setStatus(201)
         return bookmark_dict_to_json_dict(bookmark)
+
+
+class SearchGet(BaseSearchGet):
+    ''' search - get '''
+
+    def reply(self):
+        ''' reply '''
+        # this instructs the SummarySerializer to include breadcrumb
+        # information
+        self.request.set('is_search', True)
+        self.request.form.update({
+            'metadata_fields': '_all',
+        })
+
+        return super(SearchGet, self).reply()

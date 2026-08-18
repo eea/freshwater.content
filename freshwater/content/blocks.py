@@ -3,7 +3,7 @@
 import json
 import logging
 
-logger = logging.getLogger('eea.restapi.migration')
+logger = logging.getLogger('freshwater.content.migration')
 
 
 def get_blocks(obj):
