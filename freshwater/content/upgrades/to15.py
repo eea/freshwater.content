@@ -7,7 +7,7 @@ from freshwater.content.blocks import BlocksTraverser
 # pylint: disable = C0412
 from plone.restapi.serializer.utils import uid_to_url
 
-logger = logging.getLogger('eea.restapi.migration')
+logger = logging.getLogger('freshwater.content.migration')
 
 
 class DividerBlockTransformer(object):

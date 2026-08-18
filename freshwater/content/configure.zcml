@@ -49,7 +49,7 @@
   <plone:service
     method="GET"
     for="zope.interface.Interface"
-    factory="eea.restapi.api.search.SearchGet"
+    factory=".api.SearchGet"
     name="@search"
     permission="zope2.View"
     layer="freshwater.content.interfaces.IFreshwaterContentLayer"

@@ -7,6 +7,7 @@ from collective.bookmarks.storage import Bookmarks
 from plone.restapi.interfaces import IExpandableElement
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.restapi.services import Service
+from plone.restapi.services.search.get import SearchGet as BaseSearchGet
 from zope.component import adapter, getMultiAdapter
 from zope.interface import alsoProvides, implementer, Interface
 from repoze.catalog.query import Eq, NotEq
@@ -125,3 +126,17 @@ class BookmarkPut(Service):
             bookmark = bookmarks.add(owner, uid, group, queryparams, payload)
         self.request.response.setStatus(201)
         return bookmark_dict_to_json_dict(bookmark)
+
+
+class SearchGet(BaseSearchGet):
+    ''' search - get '''
+    def reply(self):
+        ''' reply '''
+        # this instructs the SummarySerializer to include breadcrumb
+        # information
+        self.request.set('is_search', True)
+        self.request.form.update({
+            'metadata_fields': '_all',
+        })
+
+        return super(SearchGet, self).reply()

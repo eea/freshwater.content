@@ -38,8 +38,9 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'eea.restapi',
-        'collective.bookmarks'
+        'collective.bookmarks',
+        'collective.exportimport',
+        'plone.namedfile',
     ],
     # -*- Extra requirements: -*-
     extras_require={
