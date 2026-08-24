@@ -105,4 +105,13 @@
     handler=".to20.run_upgrade"
     />
 
+  <genericsetup:upgradeStep
+    title="Remove markers for missing legacy add-ons"
+    description="Remove GenericSetup markers for add-ons no longer installed"
+    profile="freshwater.content:default"
+    source="*"
+    destination="21"
+    handler=".to21.run_upgrade"
+    />
+
 </configure>
